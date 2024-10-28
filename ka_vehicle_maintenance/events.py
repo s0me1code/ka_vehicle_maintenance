@@ -139,7 +139,7 @@ def get_latest_visit(vehicle):
 def get_latest_serviced_visit(vehicle):
     latest_serviced_visit = frappe.get_all(
         "Vehicle Visit KA",
-        filters={"vehicle": vehicle, "state": VehicleStatus.SERVICED},
+        filters={"vehicle": vehicle, "state": VehicleStatus.SERVICED.value},
         order_by="maintenance_date desc",
         fields=["new_km", "maintenance_date"],
         limit=1,
@@ -236,7 +236,7 @@ def create_new_maintenance_visit(doc, reminding_date=None):
         frappe.throw("Vehicle not found")
         return
     # create a maintenace visit only if rented
-    if vehicle.ownership_type != VehicleOwnershipType.RENTED:
+    if vehicle.ownership_type != VehicleOwnershipType.RENTED.value:
         frappe.throw("Vehicle not rental")
         return
     mv = frappe.new_doc("Maintenance Visit KA")

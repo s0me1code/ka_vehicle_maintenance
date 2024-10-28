@@ -21,7 +21,7 @@ def update_state_and_send_notifications():
         .select(MaintenanceVisitKA.name)
         .where(
             (MaintenanceVisitKA.docstatus == 0)
-            & (MaintenanceVisitKA.state == VehicleStatus.UPCOMING)
+            & (MaintenanceVisitKA.state == VehicleStatus.UPCOMING.value)
             & (MaintenanceVisitKA.reminding_date <= today)
         )
     ).run(as_dict=True)
@@ -34,7 +34,7 @@ def update_state_and_send_notifications():
     for index, doc in enumerate(docs, start=1):
         # Update the state
         frappe.db.set_value(
-            "Maintenance Visit KA", doc.name, "state", VehicleStatus.UNCHECKED
+            "Maintenance Visit KA", doc.name, "state", VehicleStatus.UNCHECKED.value
         )
 
         # # Create a new notification log
