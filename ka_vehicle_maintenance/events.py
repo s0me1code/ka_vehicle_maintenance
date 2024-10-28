@@ -237,6 +237,7 @@ def create_new_maintenance_visit(doc, reminding_date=None):
         return
     # create a maintenace visit only if rented
     if vehicle.ownership_type != VehicleOwnershipType.RENTED:
+        frappe.throw("Vehicle not rental")
         return
     mv = frappe.new_doc("Maintenance Visit KA")
     mv.vehicle = doc.vehicle

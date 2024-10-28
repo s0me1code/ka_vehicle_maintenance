@@ -1,8 +1,10 @@
 from enum import Enum
 
+
 class VehicleOwnershipType(Enum):
-    RENTED = "Rented"
+    RENTED = "Rental"
     LTO = "LTO"
+
 
 class VehicleStatus(Enum):
     UNUSED = "Unused"  # defult
@@ -10,7 +12,7 @@ class VehicleStatus(Enum):
     SERVICED = "Serviced"
     OVERDUE = "Overdue"
 
-    IN_GARAGE= "In Garage"
+    IN_GARAGE = "In Garage"
     NOTIFIED = "Notified"
     EARLY_NOTIFIED = "Early Notified"
 
