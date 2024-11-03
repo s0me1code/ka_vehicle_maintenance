@@ -12,6 +12,7 @@
   "visits",
   "_section",
   "vehicle",
+  "company",
   "vehicle_year",
   "last_km",
   "reminding_date",
@@ -194,12 +195,20 @@
    "fieldtype": "Int",
    "label": "Distance Traveled",
    "read_only": 1
+  },
+  {
+   "fetch_from": "vehicle.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-24 13:43:21.573753",
+ "modified": "2024-11-03 16:56:05.259424",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",

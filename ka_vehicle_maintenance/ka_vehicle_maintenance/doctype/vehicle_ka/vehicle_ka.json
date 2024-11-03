@@ -12,6 +12,7 @@
   "column_break_xtky",
   "current_km",
   "last_visit_date",
+  "company",
   "status_details_section",
   "ownership_status",
   "ownership_type",
@@ -177,11 +178,18 @@
    "fieldtype": "Attach",
    "hidden": 1,
    "label": "LTO Document"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-13 11:11:52.756694",
+ "modified": "2024-11-03 16:54:02.316842",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

@@ -8,6 +8,7 @@
   "_section",
   "vehicle",
   "maintenance_visit",
+  "company",
   "vehicle_year",
   "last_km",
   "new_km",
@@ -144,12 +145,20 @@
    "fieldname": "status_details_section",
    "fieldtype": "Section Break",
    "label": "Status Details"
+  },
+  {
+   "fetch_from": "vehicle.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-24 13:30:51.722733",
+ "modified": "2024-11-03 17:01:03.393841",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle Visit KA",
