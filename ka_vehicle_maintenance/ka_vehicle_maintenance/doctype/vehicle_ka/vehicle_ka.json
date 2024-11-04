@@ -25,6 +25,7 @@
   "visit_late",
   "state",
   "section_break_ubes",
+  "closest_reminding_date",
   "visits",
   "insurance_section",
   "end_date",
@@ -185,11 +186,17 @@
    "label": "Company",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "fieldname": "closest_reminding_date",
+   "fieldtype": "Date",
+   "label": "Closest reminding date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-03 16:54:02.316842",
+ "modified": "2024-11-04 15:50:38.844340",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

@@ -9,6 +9,7 @@ const VehicleStatus = {
     EARLY_NOTIFIED: "Early Notified",
 
     PENDING_APPROVAL: "Pending Approval",
+    IN_GARAGE: "In Garage",
 
     UPCOMING: "Upcoming",
     UNCHECKED: "Unchecked",
@@ -24,6 +25,7 @@ frappe.ui.form.on("Vehicle KA", {
     },
     onload(frm) {
         toggleLTODoc(frm)
+        toggleClosestRemindingDate(frm)
         translateState(frm);
         reorderChildTable(frm);
     },
@@ -46,6 +48,13 @@ const toggleLTODoc = (frm) => {
     } else {
         frm.toggle_display("lto_doc", false);
     }
+}
+
+const toggleClosestRemindingDate = (frm) => {
+    if (frm.doc.state == VehicleStatus.IN_GARAGE)
+        frm.toggle_display("closest_reminding_date", true)
+    else
+        frm.toggle_display("closest_reminding_date", false)
 }
 
 const validateLTODoc = (frm) => {

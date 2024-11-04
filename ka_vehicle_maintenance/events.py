@@ -99,7 +99,7 @@ def update_vehicle(doc):
     update_vehicle_visit_for_vehicle(doc)
 
     # 2. get latest submited vehicle visit state and update vehicle field (state)
-    latest_visit = get_latest_visit(vehicle.name)
+    latest_visit = get_latest_submited_visit(vehicle.name)
     if latest_visit:
         frappe.db.set_value("Vehicle KA", vehicle.name, "state", latest_visit.state)
 
@@ -123,7 +123,20 @@ def update_vehicle(doc):
         frappe.db.set_value("Vehicle KA", vehicle.name, "current_km", 0)
 
 
-def get_latest_visit(vehicle):
+def get_latest_draft_visit(vehicle):
+    latest_visit = frappe.get_all(
+        "Vehicle Visit KA",
+        filters={"vehicle": vehicle, "docstatus": DocStatus.draft()},
+        order_by="maintenance_date desc",
+        fields=["state"],
+        limit=1,
+    )
+    if len(latest_visit) > 0:
+        return latest_visit[0]
+    return None
+
+
+def get_latest_submited_visit(vehicle):
     latest_visit = frappe.get_all(
         "Vehicle Visit KA",
         filters={"vehicle": vehicle, "docstatus": DocStatus.submitted()},
@@ -239,6 +252,7 @@ def create_new_maintenance_visit(doc, reminding_date=None):
     if vehicle.ownership_type != VehicleOwnershipType.RENTED.value:
         frappe.throw("Vehicle not rental")
         return
+
     mv = frappe.new_doc("Maintenance Visit KA")
     mv.vehicle = doc.vehicle
     mv.vehicle_year = doc.vehicle_year
@@ -249,5 +263,14 @@ def create_new_maintenance_visit(doc, reminding_date=None):
     mv.maintenance_date = add_to_date(reminding_date, days=1)
     mv.save()
     # show success message
-    # frappe.msgprint("New Maintenance Visit created successfully.")
+    # frappe.msgprint("New Maintenance Visit created successfully."
+
+    # case if vehicle in garage
+    if doc.state == VehicleStatus.IN_GARAGE.value:
+        frappe.db.set_value(
+            "Vehicle KA",
+            doc.vehicle,
+            "closest_reminding_date",
+            reminding_date,
+        )
     return mv
