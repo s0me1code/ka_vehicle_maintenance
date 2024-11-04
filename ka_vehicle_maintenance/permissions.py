@@ -3,7 +3,7 @@ import frappe
 
 def company_wise_v(user):
     # Check if the user has permission for a specific company
-    company_permissions = frappe.db.get_list(
+    company_permissions = frappe.db.get_all(
         "User Permission",
         filters={"user": user, "allow": "Company"},
         fields=["user", "for_value"],
@@ -19,7 +19,7 @@ def company_wise_v(user):
 
 
 def company_wise_vv(user):
-    company_permissions = frappe.db.get_list(
+    company_permissions = frappe.db.get_all(
         "User Permission",
         filters={"user": user, "allow": "Company"},
         fields=["user", "for_value"],
@@ -34,7 +34,7 @@ def company_wise_vv(user):
 
 def company_wise_mv(user):
     # Check if the user has permission for a specific company
-    company_permissions = frappe.db.get_list(
+    company_permissions = frappe.db.get_all(
         "User Permission",
         filters={"user": user, "allow": "Company"},
         fields=["user", "for_value"],
@@ -60,7 +60,7 @@ def update_company():
             doctype, doc.name, "company", company, update_modified=False
         )
     frappe.db.commit()
-    print(f"Updated {doctype} {len(docs)} records with company 'Hi'")
+    print(f"Updated {doctype} {len(docs)} records with company '{company}'")
     ###
 
     doctype = "Vehicle Visit KA"
@@ -72,7 +72,7 @@ def update_company():
             doctype, doc.name, "company", company, update_modified=False
         )
     frappe.db.commit()
-    print(f"Updated {doctype} {len(docs)} records with company 'Hi'")
+    print(f"Updated {doctype} {len(docs)} records with company '{company}'")
     ###
 
     doctype = "Maintenance Visit KA"
@@ -84,4 +84,4 @@ def update_company():
             doctype, doc.name, "company", company, update_modified=False
         )
     frappe.db.commit()
-    print(f"Updated {doctype} {len(docs)} records with company 'Hi'")
+    print(f"Updated {doctype} {len(docs)} records with company '{company}'")
