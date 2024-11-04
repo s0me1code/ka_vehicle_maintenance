@@ -105,7 +105,7 @@ def update_vehicle(doc):
 
     # 3. get latest vehicle visit with status "serviced"
     # and update filed (current_km and last_visit_date)
-    latest_serviced_visit = get_latest_serviced_visit(vehicle.name)
+    latest_serviced_visit = get_latest_submited_visit(vehicle.name)
     if latest_serviced_visit:
         frappe.db.set_value(
             "Vehicle KA",
