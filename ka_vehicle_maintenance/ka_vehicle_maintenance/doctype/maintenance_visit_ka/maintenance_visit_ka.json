@@ -10,6 +10,9 @@
   "amended_from",
   "section_break_cxnq",
   "quotation",
+  "column_break_szeu",
+  "quotation_total",
+  "section_break_pqev",
   "quotation_items",
   "section_break_hsas",
   "visits",
@@ -223,12 +226,27 @@
    "fieldtype": "Table",
    "label": "Quotation Items",
    "options": "Quotation Item"
+  },
+  {
+   "fieldname": "column_break_szeu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "quotation.base_total",
+   "fieldname": "quotation_total",
+   "fieldtype": "Currency",
+   "label": "Quotation Total",
+   "precision": "3"
+  },
+  {
+   "fieldname": "section_break_pqev",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-28 10:38:38.551935",
+ "modified": "2024-11-28 15:38:19.358792",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",

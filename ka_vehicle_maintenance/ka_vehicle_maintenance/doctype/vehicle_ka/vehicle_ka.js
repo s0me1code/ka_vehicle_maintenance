@@ -19,6 +19,41 @@ const OwnershipStatus = {
     Rental: "Rental",
 };
 
+const populateQuotations = (frm) => {
+    console.log("populateQuotations ")
+    frappe.call({
+        method: "frappe.client.get_list",
+        args: {
+            doctype: "Quotation",
+            filters: [
+                ["custom_vehicle", "=", frm.doc.name],
+            ],
+        },
+        callback: function(res) {
+            if (res.message) {
+                const quotations = res.message;
+                console.log(quotations)
+                frm.clear_table("quotations");
+                let total = 0
+                quotations.forEach(quot => {
+                    let child = frm.add_child("quotations");
+                    child.quotation = quot.name;
+                    child.vehicle = quot.vehicle;
+                    child.total = quot.total;
+                    console.log(quot.total)
+                    total += quot.total;
+                });
+                frm.set_value('total', total)
+                console.log(total)
+                frm.refresh_field("quotations");
+            } else {
+                frm.clear_table("quotations");
+                frm.refresh_field("quotations");
+            }
+        }
+    });
+}
+
 frappe.ui.form.on("Vehicle KA", {
     ownership_type(frm) {
         toggleLTODoc(frm)
@@ -28,6 +63,7 @@ frappe.ui.form.on("Vehicle KA", {
         toggleClosestRemindingDate(frm)
         translateState(frm);
         reorderChildTable(frm);
+        populateQuotations(frm);
     },
     refresh(frm) {
         // Custom buttons in groups

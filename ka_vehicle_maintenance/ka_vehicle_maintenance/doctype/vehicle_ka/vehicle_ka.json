@@ -29,6 +29,7 @@
   "visits",
   "section_break_yasj",
   "quotations",
+  "total",
   "insurance_section",
   "end_date",
   "ownership_section",
@@ -204,11 +205,17 @@
    "fieldtype": "Table",
    "label": "Quotations",
    "options": "Vehicle Quotation"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "precision": "3"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-28 10:46:12.099570",
+ "modified": "2024-11-28 15:39:48.518723",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",
