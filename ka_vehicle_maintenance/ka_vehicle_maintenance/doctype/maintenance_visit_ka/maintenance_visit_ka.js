@@ -16,6 +16,37 @@ const VehicleStatus = {
 };
 const differanceBWMaintenanceAndRemindingDate = -1
 
+const onQuotation = (frm) => {
+    console.log("onQuotation")
+    if (frm.doc.quotation) {
+        frappe.call({
+            method: "frappe.client.get",
+            args: {
+                doctype: "Quotation",
+                name: frm.doc.quotation
+            },
+            callback: function(r) {
+                if (r.message) {
+                    const quotation = r.message;
+                    frm.clear_table("quotation_items");
+                    quotation.items.forEach(item => {
+                        let child = frm.add_child("quotation_items");
+                        child.item_code = item.item_code;
+                        child.item_name = item.item_name;
+                        child.qty = item.qty;
+                        child.rate = item.rate;
+                        child.amount = item.amount;
+                    });
+                    frm.refresh_field("quotation_items");
+                }
+            }
+        });
+    } else {
+        frm.clear_table("quotation_items");
+        frm.refresh_field("quotation_items");
+    }
+}
+
 frappe.ui.form.on("Maintenance Visit KA", {
     state(frm) {
         translateState(frm);
@@ -25,6 +56,9 @@ frappe.ui.form.on("Maintenance Visit KA", {
     },
     visited(frm) {
         determineState(frm);
+    },
+    quotation(frm) {
+        onQuotation(frm)
     },
     visit_late(frm) {
         // TODO: for test remove when done

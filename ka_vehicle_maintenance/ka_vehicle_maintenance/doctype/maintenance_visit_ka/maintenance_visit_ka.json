@@ -8,6 +8,9 @@
  "field_order": [
   "section_break_ybwq",
   "amended_from",
+  "section_break_cxnq",
+  "quotation",
+  "quotation_items",
   "section_break_hsas",
   "visits",
   "_section",
@@ -204,12 +207,28 @@
    "label": "Company",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_cxnq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "quotation",
+   "fieldtype": "Link",
+   "label": "Quotation ",
+   "options": "Quotation"
+  },
+  {
+   "fieldname": "quotation_items",
+   "fieldtype": "Table",
+   "label": "Quotation Items",
+   "options": "Quotation Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-11-10 11:29:55.739657",
+ "modified": "2024-11-28 10:38:38.551935",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",
