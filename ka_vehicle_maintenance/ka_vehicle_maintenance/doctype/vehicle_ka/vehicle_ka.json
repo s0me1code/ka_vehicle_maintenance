@@ -27,8 +27,6 @@
   "section_break_ubes",
   "closest_reminding_date",
   "visits",
-  "section_break_rarh",
-  "items",
   "section_break_yasj",
   "quotations",
   "total",
@@ -214,22 +212,11 @@
    "fieldtype": "Currency",
    "label": "Total",
    "precision": "3"
-  },
-  {
-   "fieldname": "section_break_rarh",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "items",
-   "fieldtype": "Table",
-   "label": "Visits Items",
-   "options": "Maintenance Visit Items",
-   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-01 14:46:16.162921",
+ "modified": "2024-12-01 15:43:37.651454",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

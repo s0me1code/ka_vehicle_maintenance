@@ -160,6 +160,7 @@
    "fetch_from": "maintenance_visit.total",
    "fieldname": "total",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Total",
    "precision": "3",
    "reqd": 1
@@ -168,7 +169,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-12-01 15:21:36.009076",
+ "modified": "2024-12-01 15:43:54.910859",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle Visit KA",

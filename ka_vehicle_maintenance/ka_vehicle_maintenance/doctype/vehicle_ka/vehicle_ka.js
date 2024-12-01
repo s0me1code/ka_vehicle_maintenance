@@ -19,6 +19,14 @@ const OwnershipStatus = {
     Rental: "Rental",
 };
 
+const calcTotal = (frm) => {
+    const visits_total = frm.doc.visits.reduce((sum, visit) => sum + visit.total, 0)
+    console.log(visits_total)
+    const quotations_total = frm.doc.quotations.reduce((sum, quo) => sum + quo.total, 0)
+    console.log(quotations_total)
+    frm.set_value('total', visits_total+quotations_total)
+}
+
 const populateQuotations = (frm) => {
     console.log("populateQuotations ")
     frappe.call({
@@ -85,6 +93,7 @@ frappe.ui.form.on("Vehicle KA", {
         translateState(frm);
         reorderChildTable(frm);
         populateQuotations(frm);
+        calcTotal(frm)
     },
     refresh(frm) {
         // Custom buttons in groups
@@ -93,6 +102,7 @@ frappe.ui.form.on("Vehicle KA", {
         //     someFuntion();
         // });
         reorderChildTable(frm);
+        calcTotal(frm)
     },
     before_save(frm) {
         validateLTODoc(frm)
