@@ -30,6 +30,7 @@
    "fetch_from": "quotation.grand_total",
    "fieldname": "total",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Total",
    "reqd": 1
   }
@@ -37,7 +38,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-28 16:02:53.555207",
+ "modified": "2024-12-01 10:21:35.594682",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle Quotation",

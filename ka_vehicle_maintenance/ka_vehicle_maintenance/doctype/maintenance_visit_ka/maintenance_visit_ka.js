@@ -15,10 +15,28 @@ const VehicleStatus = {
     UNCHECKED: "Unchecked",
 };
 const differanceBWMaintenanceAndRemindingDate = -1
+const onIsNew = (frm) => (frm.is_new() &&
+    frappe.msgprint({
+        title: __('Please Save then Selece the Quotation'),
+    })
+)
+
+const calcTotal = (frm) => {
+    console.log("on maintenance_visit_items")
+    if (!frm.doc.quotation && frm.doc.maintenance_visit_items.length > 0) {
+        const total = frm.doc.maintenance_visit_items.reduce((accumated, current) => {
+            return accumated + (current.qty * current.rate)
+        }, 0)
+        total > 0 && total !== frm.doc.total && frm.set_value('total', total)
+    }
+}
 
 const onQuotation = (frm) => {
     console.log("onQuotation")
+    if (frm.is_new()) { onIsNew(frm); return }
     if (frm.doc.quotation) {
+        frm.set_df_property('maintenance_visit_items', 'read_only', 1);
+        frm.refresh_field('maintenance_visit_items');
         frappe.call({
             method: "frappe.client.get",
             args: {
@@ -28,24 +46,49 @@ const onQuotation = (frm) => {
             callback: function(r) {
                 if (r.message) {
                     const quotation = r.message;
-                    frm.clear_table("quotation_items");
+                    frm.clear_table("maintenance_visit_items");
                     quotation.items.forEach(item => {
-                        let child = frm.add_child("quotation_items");
-                        child.item_code = item.item_code;
-                        child.item_name = item.item_name;
+                        let child = frm.add_child("maintenance_visit_items");
+                        child.item = item.item_code;
                         child.qty = item.qty;
                         child.rate = item.rate;
-                        child.amount = item.amount;
+                        child.vehicle = frm.doc.vehicle
+                        child.maintenance_visit = frm.doc.name
+                        child.quotation = frm.doc.quotation
                     });
-                    frm.refresh_field("quotation_items");
+                    frm.refresh_field("maintenance_visit_items");
                 }
             }
         });
     } else {
-        frm.clear_table("quotation_items");
-        frm.refresh_field("quotation_items");
+        // maintenance_visit_items
+        frm.clear_table("maintenance_visit_items");
+        frm.set_df_property('maintenance_visit_items', 'read_only', 0);
+        frm.refresh_field("maintenance_visit_items");
+        // total
+        frm.set_value('total', '')
     }
+    console.log(frm.doc.maintenance_visit_items)
 }
+
+frappe.ui.form.on("Maintenance Visit Items", {
+    item(frm) {
+        calcTotal(frm)
+    },
+    rate(frm) {
+        calcTotal(frm)
+    },
+    qty(frm) {
+        calcTotal(frm)
+    },
+    maintenance_visit_items_add(frm, cdt, cdn) {
+        if (frm.is_new()) { onIsNew(frm); return }
+        let child = frappe.get_doc(cdt, cdn);
+        child.vehicle = frm.doc.vehicle
+        child.maintenance_visit = frm.doc.name
+        frm.refresh_field("maintenance_visit_items")
+    }
+})
 
 frappe.ui.form.on("Maintenance Visit KA", {
     state(frm) {
@@ -59,6 +102,9 @@ frappe.ui.form.on("Maintenance Visit KA", {
     },
     quotation(frm) {
         onQuotation(frm)
+    },
+    maintenance_visit_items(frm) {
+        calcTotal(frm)
     },
     visit_late(frm) {
         // TODO: for test remove when done
