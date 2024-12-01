@@ -16,6 +16,7 @@
   "attachment",
   "reminding_date",
   "maintenance_date",
+  "total",
   "status_details_section",
   "state",
   "next_visit_section",
@@ -153,12 +154,21 @@
    "label": "Company",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "maintenance_visit.total",
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "precision": "3",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-03 17:01:03.393841",
+ "modified": "2024-12-01 15:21:36.009076",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle Visit KA",

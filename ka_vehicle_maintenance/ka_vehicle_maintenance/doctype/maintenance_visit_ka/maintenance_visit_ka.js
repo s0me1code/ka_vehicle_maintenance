@@ -23,11 +23,11 @@ const onIsNew = (frm) => (frm.is_new() &&
 
 const calcTotal = (frm) => {
     console.log("on maintenance_visit_items")
-    if (!frm.doc.quotation && frm.doc.maintenance_visit_items.length > 0) {
+    if (!frm.doc.quotation) {
         const total = frm.doc.maintenance_visit_items.reduce((accumated, current) => {
             return accumated + (current.qty * current.rate)
         }, 0)
-        total > 0 && total !== frm.doc.total && frm.set_value('total', total)
+        total !== frm.doc.total && frm.set_value('total', total)
     }
 }
 
@@ -87,7 +87,7 @@ frappe.ui.form.on("Maintenance Visit Items", {
         child.vehicle = frm.doc.vehicle
         child.maintenance_visit = frm.doc.name
         frm.refresh_field("maintenance_visit_items")
-    }
+    },
 })
 
 frappe.ui.form.on("Maintenance Visit KA", {

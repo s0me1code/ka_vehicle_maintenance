@@ -23,9 +23,9 @@ submited_at
 """Vehicle Visit
 maintenance_visit       [Maintenance Visit]
 vehicle                 [Vehicle]
-visit_year              
-state                   
-last_km                 
+visit_year
+state
+last_km
 new_km
 reminding_date
 maintaning_date
@@ -101,7 +101,8 @@ def update_vehicle(doc):
     # 2. get latest submited vehicle visit state and update vehicle field (state)
     latest_visit = get_latest_submited_visit(vehicle.name)
     if latest_visit:
-        frappe.db.set_value("Vehicle KA", vehicle.name, "state", latest_visit.state)
+        frappe.db.set_value("Vehicle KA", vehicle.name,
+                            "state", latest_visit.state)
 
     # 3. get latest vehicle visit with status "serviced"
     # and update filed (current_km and last_visit_date)
@@ -183,6 +184,11 @@ def update_vehicle_visit_for_vehicle(doc):
     else:
         vv = vv_list[0]
         vv = frappe.get_doc("Vehicle Visit KA", vv.name)
+    mv = frappe.get_doc(
+        "Maintenance Visit KA",
+        doc.name,
+        fields=["total"]
+    )
     vv.parent = doc.vehicle
     vv.parentfield = "visits"
     vv.parenttype = "Vehicle KA"
@@ -199,6 +205,7 @@ def update_vehicle_visit_for_vehicle(doc):
     vv.checked_at = doc.checked_at
     vv.submitted_at = doc.submitted_at
     vv.document_status = doc.docstatus
+    vv.total = mv.total
     vv.save()
 
 
@@ -233,6 +240,7 @@ def update_vehicle_visit_for_maintenance(doc):
     vv.checked_at = doc.checked_at
     vv.submitted_at = doc.submitted_at
     vv.document_status = doc.docstatus
+    vv.total = doc.total
     return vv
 
 

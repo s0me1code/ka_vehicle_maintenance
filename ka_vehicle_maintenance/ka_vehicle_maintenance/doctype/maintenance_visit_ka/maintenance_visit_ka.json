@@ -231,7 +231,6 @@
    "options": "Maintenance Visit Items"
   },
   {
-   "fetch_from": "quotation.base_total",
    "fieldname": "total",
    "fieldtype": "Currency",
    "label": "Maintenance Visit Items Total",
@@ -241,7 +240,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-01 12:14:41.719973",
+ "modified": "2024-12-01 15:20:44.490435",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",
