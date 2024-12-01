@@ -204,7 +204,8 @@
    "fieldname": "quotations",
    "fieldtype": "Table",
    "label": "Quotations",
-   "options": "Vehicle Quotation"
+   "options": "Vehicle Quotation",
+   "read_only": 1
   },
   {
    "fieldname": "total",
@@ -215,7 +216,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-28 15:39:48.518723",
+ "modified": "2024-12-01 10:59:27.887363",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

@@ -28,30 +28,51 @@ const populateQuotations = (frm) => {
             filters: [
                 ["custom_vehicle", "=", frm.doc.name],
             ],
+            fields: ["name", "custom_vehicle", "grand_total"]
         },
         callback: function(res) {
             if (res.message) {
                 const quotations = res.message;
-                console.log(quotations)
-                frm.clear_table("quotations");
-                let total = 0
-                quotations.forEach(quot => {
-                    let child = frm.add_child("quotations");
-                    child.quotation = quot.name;
-                    child.vehicle = quot.vehicle;
-                    child.total = quot.total;
-                    console.log(quot.total)
-                    total += quot.total;
-                });
-                frm.set_value('total', total)
-                console.log(total)
-                frm.refresh_field("quotations");
+                console.log(frm.doc.quotations)
+                const isDifferent = areItemsDifferent(frm.doc.quotations, quotations)
+                if (isDifferent) {
+                    frm.clear_table("quotations");
+                    let total = 0
+                    quotations.forEach(quot => {
+                        let child = frm.add_child("quotations");
+                        child.quotation = quot.name;
+                        child.vehicle = quot.custom_vehicle;
+                        child.total = quot.grand_total;
+                        total += quot.grand_total;
+                    });
+                    frm.set_value('total', total)
+                    frm.refresh_field("quotations");
+                    frm.save()
+                }
             } else {
                 frm.clear_table("quotations");
                 frm.refresh_field("quotations");
             }
         }
     });
+}
+
+function areItemsDifferent(currentItems = [], newItems = []) {
+    if (newItems.length !== currentItems.length) {
+        return true;
+    }
+    for (let i = 0; i < newItems.length; i++) {
+        const retrievedItem = newItems[i];
+        const currentItem = currentItems[i];
+        if (
+            retrievedItem.item_code !== currentItem.item_code ||
+            retrievedItem.qty !== currentItem.qty ||
+            retrievedItem.rate !== currentItem.rate
+        ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 frappe.ui.form.on("Vehicle KA", {
