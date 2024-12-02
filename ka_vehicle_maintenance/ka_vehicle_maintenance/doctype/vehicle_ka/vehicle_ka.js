@@ -34,7 +34,7 @@ const populateQuotations = (frm) => {
             filters: [
                 ["custom_vehicle", "=", frm.doc.name],
             ],
-            fields: ["name", "custom_vehicle", "grand_total", "creation", "status"],
+            fields: ["name", "custom_vehicle", "grand_total", "creation", "status", "workflow_state"],
             oreder_by: "creation desc",
         },
         callback: function(res) {
@@ -53,8 +53,7 @@ const populateQuotations = (frm) => {
                         child.status = quot.status;
                         total += quot.grand_total;
                     });
-
-                    frm.set_value('last_quotation_status', quotations[0].status)
+                    frm.set_value('last_quotation_status', quotations[0].workflow_state)
                     console.log(quotations)
                     frm.set_value('total', total)
                     frm.refresh_field("quotations");
