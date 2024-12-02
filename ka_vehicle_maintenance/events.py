@@ -282,3 +282,9 @@ def create_new_maintenance_visit(doc, reminding_date=None):
             reminding_date,
         )
     return mv
+
+
+def on_quotation_update(doc, event):
+    vehicle_name = doc.custom_vehicle
+    workflow_state = doc.workflow_state
+    frappe.set_value("Vehicle KA", vehicle_name, "last_quotation_status", workflow_state)

@@ -217,12 +217,13 @@
   {
    "fieldname": "last_quotation_status",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Last Quotation Status"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-01 18:41:08.241897",
+ "modified": "2024-12-02 13:19:49.263901",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

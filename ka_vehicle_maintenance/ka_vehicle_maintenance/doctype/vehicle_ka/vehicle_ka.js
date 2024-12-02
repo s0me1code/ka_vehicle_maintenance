@@ -35,12 +35,12 @@ const populateQuotations = (frm) => {
                 ["custom_vehicle", "=", frm.doc.name],
             ],
             fields: ["name", "custom_vehicle", "grand_total", "creation", "status", "workflow_state"],
-            oreder_by: "creation desc",
+            order_by: "creation desc",
         },
         callback: function(res) {
             if (res.message) {
                 const quotations = res.message;
-                console.log(frm.doc.quotations)
+                console.log(quotations)
                 const isDifferent = areItemsDifferent(frm.doc.quotations, quotations)
                 if (isDifferent) {
                     frm.clear_table("quotations");
@@ -53,11 +53,10 @@ const populateQuotations = (frm) => {
                         child.status = quot.status;
                         total += quot.grand_total;
                     });
-                    frm.set_value('last_quotation_status', quotations[0].workflow_state)
+                    //frm.set_value('last_quotation_status', quotations[0].workflow_state)
                     console.log(quotations)
                     frm.set_value('total', total)
                     frm.refresh_field("quotations");
-                    frm.save()
                 }
             } else {
                 frm.clear_table("quotations");
@@ -80,7 +79,7 @@ function areItemsDifferent(currentItems = [], newItems = []) {
             retrievedItem.custom_vehicle !== currentItem.vehicle ||
             retrievedItem.status !== currentItem.status
         ) {
-        console.log({retrievedItem, currentItem})
+            console.log({ retrievedItem, currentItem })
             return true;
         }
     }
@@ -139,22 +138,24 @@ const validateLTODoc = (frm) => {
     }
 }
 
-// Function to reorder the child table items
-const reorderChildTable = (frm) => {
-    // Get the child table data
-    let child_table_data = frm.doc.visits;
-
-    // Example: Sort the items by maintenance date
+const reorderQuotationsTable = (frm) => {
+    let child_table_data = frm.doc.quotations;
     child_table_data.sort((a, b) =>
-        b.maintenance_date.localeCompare(a.maintenance_date)
+        b.creation.localeCompare(a.creation)
     );
-
-    // Update the idx values
     child_table_data.forEach((item, index) => {
         item.idx = index + 1;
     });
-
-    // Refresh the field to reflect changes
+    frm.refresh_field("quotations");
+};
+const reorderChildTable = (frm) => {
+    let child_table_data = frm.doc.visits;
+    child_table_data.sort((a, b) =>
+        b.maintenance_date.localeCompare(a.maintenance_date)
+    );
+    child_table_data.forEach((item, index) => {
+        item.idx = index + 1;
+    });
     frm.refresh_field("visits");
 };
 

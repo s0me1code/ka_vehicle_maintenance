@@ -140,6 +140,9 @@ doc_events = {
         "on_trash": "ka_vehicle_maintenance.events.on_maintenance_delete",
         "on_cancel": "ka_vehicle_maintenance.events.on_maintenance_delete",
     },
+    "Quotation": {
+        "on_update": "ka_vehicle_maintenance.events.on_quotation_update",
+    }
 }
 
 # Scheduled Tasks

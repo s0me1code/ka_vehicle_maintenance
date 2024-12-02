@@ -5,7 +5,7 @@
    "label": "Vehicle States"
   }
  ],
- "content": "[{\"id\":\"-PpgJPQ1Bw\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Total Vehicles</b></span>\",\"col\":12}},{\"id\":\"zW9SkRa8aF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Number of Vehicle\",\"col\":4}},{\"id\":\"mCfv51OCq8\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"LTO Vehicle\",\"col\":4}},{\"id\":\"PAi89lb0e3\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Rental Vehicle\",\"col\":4}},{\"id\":\"Il0_jxkpFR\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Rental Vehicles</b></span>\",\"col\":12}},{\"id\":\"cTQHZD7jco\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"In Garage\",\"col\":4}},{\"id\":\"Ar2ctgHFzp\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"On Road\",\"col\":4}},{\"id\":\"6TghVrBU4L\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Maintained/Unmaintained </b></span>\",\"col\":12}},{\"id\":\"-mPTOGHhI_\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Maintained Vehicle\",\"col\":4}},{\"id\":\"6_hukVeBdX\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Unmaintained Vehicle\",\"col\":4}},{\"id\":\"LkqrpJHM9X\",\"type\":\"header\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px; letter-spacing: 0.18px;\\\"><b>Maintenance Visits</b></span>\",\"col\":12}},{\"id\":\"dGzaoqv1dA\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Active Visits\",\"col\":3}},{\"id\":\"OY9KBVMONf\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Upcoming Visits\",\"col\":3}},{\"id\":\"ATjsMmFU6K\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Unchecked Visits\",\"col\":3}},{\"id\":\"V7eyA0wkKK\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Pending Approval Visits\",\"col\":3}},{\"id\":\"exIs8crEqW\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Vehicle States\",\"col\":12}}]",
+ "content": "[{\"id\":\"-PpgJPQ1Bw\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Total Vehicles</b></span>\",\"col\":12}},{\"id\":\"zW9SkRa8aF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Number of Vehicle\",\"col\":4}},{\"id\":\"mCfv51OCq8\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"LTO Vehicle\",\"col\":4}},{\"id\":\"PAi89lb0e3\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Rental Vehicle\",\"col\":4}},{\"id\":\"Il0_jxkpFR\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Rental Vehicles</b></span>\",\"col\":12}},{\"id\":\"cTQHZD7jco\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"In Garage\",\"col\":4}},{\"id\":\"KH1peCPgyq\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Vehicles Pending In Garage\",\"col\":4}},{\"id\":\"Ar2ctgHFzp\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"On Road\",\"col\":4}},{\"id\":\"6TghVrBU4L\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Maintained/Unmaintained </b></span>\",\"col\":12}},{\"id\":\"-mPTOGHhI_\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Maintained Vehicle\",\"col\":4}},{\"id\":\"6_hukVeBdX\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Unmaintained Vehicle\",\"col\":4}},{\"id\":\"LkqrpJHM9X\",\"type\":\"header\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px; letter-spacing: 0.18px;\\\"><b>Maintenance Visits</b></span>\",\"col\":12}},{\"id\":\"dGzaoqv1dA\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Active Visits\",\"col\":3}},{\"id\":\"OY9KBVMONf\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Upcoming Visits\",\"col\":3}},{\"id\":\"ATjsMmFU6K\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Unchecked Visits\",\"col\":3}},{\"id\":\"V7eyA0wkKK\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Pending Approval Visits\",\"col\":3}},{\"id\":\"exIs8crEqW\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Vehicle States\",\"col\":12}}]",
  "creation": "2024-08-28 12:06:48.145530",
  "custom_blocks": [],
  "docstatus": 0,
@@ -70,10 +70,11 @@
    "link_to": "Warehouse Wise Stock Balance",
    "link_type": "Report",
    "onboard": 0,
+   "report_ref_doctype": "Stock Ledger Entry",
    "type": "Link"
   }
  ],
- "modified": "2024-10-06 14:06:40.983167",
+ "modified": "2024-12-02 13:26:22.112257",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "KA - Vehicle Maintenance",
@@ -81,6 +82,10 @@
   {
    "label": "Number of Vehicle",
    "number_card_name": "Number of Vehicle"
+  },
+  {
+   "label": "Vehicles Pending In Garage",
+   "number_card_name": "Vehicles Pending In Garage"
   },
   {
    "label": "Total Active Visits",
