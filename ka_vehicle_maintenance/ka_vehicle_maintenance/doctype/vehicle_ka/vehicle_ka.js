@@ -21,10 +21,8 @@ const OwnershipStatus = {
 
 const calcTotal = (frm) => {
     const visits_total = frm.doc.visits.reduce((sum, visit) => sum + visit.total, 0)
-    console.log(visits_total)
     const quotations_total = frm.doc.quotations.reduce((sum, quo) => sum + quo.total, 0)
-    console.log(quotations_total)
-    frm.set_value('total', visits_total+quotations_total)
+    frm.set_value('total', visits_total + quotations_total)
 }
 
 const populateQuotations = (frm) => {
@@ -36,7 +34,8 @@ const populateQuotations = (frm) => {
             filters: [
                 ["custom_vehicle", "=", frm.doc.name],
             ],
-            fields: ["name", "custom_vehicle", "grand_total"]
+            fields: ["name", "custom_vehicle", "grand_total", "creation", "status"],
+            oreder_by: "creation desc",
         },
         callback: function(res) {
             if (res.message) {
@@ -51,8 +50,12 @@ const populateQuotations = (frm) => {
                         child.quotation = quot.name;
                         child.vehicle = quot.custom_vehicle;
                         child.total = quot.grand_total;
+                        child.status = quot.status;
                         total += quot.grand_total;
                     });
+
+                    frm.set_value('last_quotation_status', quotations[0].status)
+                    console.log(quotations)
                     frm.set_value('total', total)
                     frm.refresh_field("quotations");
                     frm.save()
@@ -73,10 +76,12 @@ function areItemsDifferent(currentItems = [], newItems = []) {
         const retrievedItem = newItems[i];
         const currentItem = currentItems[i];
         if (
-            retrievedItem.item_code !== currentItem.item_code ||
-            retrievedItem.qty !== currentItem.qty ||
-            retrievedItem.rate !== currentItem.rate
+            retrievedItem.name !== currentItem.quotation ||
+            retrievedItem.grand_total !== currentItem.total ||
+            retrievedItem.custom_vehicle !== currentItem.vehicle ||
+            retrievedItem.status !== currentItem.status
         ) {
+        console.log({retrievedItem, currentItem})
             return true;
         }
     }
