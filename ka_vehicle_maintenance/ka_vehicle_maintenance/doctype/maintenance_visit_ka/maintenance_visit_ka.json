@@ -11,22 +11,24 @@
   "section_break_hsas",
   "visits",
   "_section",
-  "vehicle",
-  "company",
-  "vehicle_year",
-  "last_km",
-  "reminding_date",
   "column_break_rcbc",
-  "attachment",
   "maintenance_date",
   "new_km",
   "distance",
-  "status_details_section",
+  "column_break_kqkk",
   "called",
   "need_visit",
   "visited",
   "visit_late",
   "state",
+  "attachment",
+  "section_break_ffso",
+  "vehicle",
+  "company",
+  "vehicle_year",
+  "last_km",
+  "reminding_date",
+  "column_break_wcbw",
   "next_visit_section",
   "next_reminding_date",
   "section_break_pqev",
@@ -120,6 +122,7 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval:doc.state==\"Serviced\"||doc.state==\"Overdue\"",
    "fieldname": "attachment",
    "fieldtype": "Attach",
    "label": "Attachment"
@@ -127,7 +130,9 @@
   {
    "fieldname": "next_visit_section",
    "fieldtype": "Section Break",
-   "label": "Next Visit"
+   "hidden": 1,
+   "label": "Next Visit",
+   "show_on_timeline": 1
   },
   {
    "fieldname": "next_reminding_date",
@@ -162,11 +167,6 @@
    "label": "Submitted At"
   },
   {
-   "fieldname": "status_details_section",
-   "fieldtype": "Section Break",
-   "label": "Status Details"
-  },
-  {
    "default": "No",
    "fieldname": "called",
    "fieldtype": "Select",
@@ -192,6 +192,7 @@
    "default": "No",
    "fieldname": "visit_late",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Did the Rider Visit the Garage Late?",
    "options": "No\nYes"
   },
@@ -203,11 +204,11 @@
   },
   {
    "fetch_from": "vehicle.company",
+   "fetch_if_empty": 1,
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
-   "options": "Company",
-   "reqd": 1
+   "options": "Company"
   },
   {
    "fieldname": "quotation",
@@ -217,7 +218,9 @@
   },
   {
    "fieldname": "section_break_pqev",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "show_on_timeline": 1
   },
   {
    "fieldname": "maintenance_visit_items",
@@ -230,12 +233,27 @@
    "fieldtype": "Currency",
    "label": "Maintenance Visit Items Total",
    "precision": "3"
+  },
+  {
+   "fieldname": "column_break_kqkk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ffso",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Details",
+   "show_on_timeline": 1
+  },
+  {
+   "fieldname": "column_break_wcbw",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-02 11:43:33.051239",
+ "modified": "2024-12-26 14:52:53.414405",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",

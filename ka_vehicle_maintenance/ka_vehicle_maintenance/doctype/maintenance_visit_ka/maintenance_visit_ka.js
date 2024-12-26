@@ -132,6 +132,16 @@ frappe.ui.form.on("Maintenance Visit KA", {
         translateState(frm);
         updateDistance(frm);
     },
+    validate(frm) {
+        const distance = frm.doc.distance
+        console.log(distance)
+        if (distance < 0) {
+            frappe.throw({
+                title: __('Wrong KM'),
+                message: __('Please Verifiy the distance it is less than the previse visit!'),
+            })
+        }
+    },
     before_save(frm) {
         // if (!frm.doc.maintenance_date && frm.doc.reminding_date) {
         //     var date = frappe.datetime.add_days(frm.doc.reminding_date, 3);
@@ -214,7 +224,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
                                     "Please enter the next reminding date"
                                 ),
                             });
-                        frm.set_value("next_reminding_date", values.date);
+                        frm.next_reminding_date = values.date
                         createNewMV(frm, values.date);
                         if (!frm.doc.submitted_at)
                             frm.doc.submitted_at = frm.doc.modified;
