@@ -134,7 +134,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
     },
     validate(frm) {
         const distance = frm.doc.distance
-        console.log(distance)
+        console.log("d",distance)
         if (distance < 0) {
             frappe.throw({
                 title: __('Wrong KM'),
@@ -147,12 +147,15 @@ frappe.ui.form.on("Maintenance Visit KA", {
         //     var date = frappe.datetime.add_days(frm.doc.reminding_date, 3);
         //     frm.set_value("maintenance_date", date);
         // }
+        console.log("before_save")
         if (!frm.doc.reminding_date && frm.doc.maintenance_date) {
             var date = frappe.datetime.add_days(frm.doc.maintenance_date, differanceBWMaintenanceAndRemindingDate);
             frm.set_value("reminding_date", date);
         }
+        console.log("done", frm.doc)
     },
     after_save(frm) {
+        console.log("after_save")
         if (frm.doc.docstatus == 0 && !frm.doc.checked_at) {
             switch (frm.doc.state) {
                 case VehicleStatus.SERVICED:
@@ -166,6 +169,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
         }
     },
     before_submit(frm) {
+        console.log("before_submit")
         var new_km = frm.doc.new_km;
         if (!new_km || new_km == 0) {
             frappe.validated = false;
@@ -180,7 +184,6 @@ frappe.ui.form.on("Maintenance Visit KA", {
             case VehicleStatus.UPCOMING:
             case VehicleStatus.UNUSED:
                 // Prevent the default submit action
-                frappe.validated = false;
                 frappe.throw({
                     title: __("Unvalid State"),
                     message: __("You can not submit document in this State"),
@@ -189,9 +192,10 @@ frappe.ui.form.on("Maintenance Visit KA", {
 
             case VehicleStatus.SERVICED:
             case VehicleStatus.OVERDUE:
+                console.log("before_submit")
+                console.log("ssoo",frm.doc)
                 if (!frm.doc.attachment) {
                     // Prevent the default submit action
-                    frappe.validated = false;
                     frappe.throw({
                         title: __("Missing Attachment"),
                         message: __("Attach the Document in order to submit"),

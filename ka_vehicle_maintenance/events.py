@@ -190,6 +190,7 @@ def update_vehicle_visit_for_vehicle(doc):
         fields=["total"]
     )
     vv.parent = doc.vehicle
+    vv.company = doc.company
     vv.parentfield = "visits"
     vv.parenttype = "Vehicle KA"
     vv.vehicle = doc.vehicle
@@ -229,6 +230,7 @@ def update_vehicle_visit_for_maintenance(doc):
 
     vv.vehicle = doc.vehicle
     vv.maintenance_visit = doc.name
+    vv.company = doc.company
     vv.vehicle_year = doc.vehicle_year
     vv.state = doc.state
     vv.last_km = doc.last_km
@@ -263,6 +265,7 @@ def create_new_maintenance_visit(doc, reminding_date=None):
 
     mv = frappe.new_doc("Maintenance Visit KA")
     mv.vehicle = doc.vehicle
+    mv.company = doc.company
     mv.vehicle_year = doc.vehicle_year
     mv.state = "Upcoming"
     mv.last_km = doc.new_km
