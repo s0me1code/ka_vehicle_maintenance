@@ -99,13 +99,12 @@ def update_vehicle(doc):
     update_vehicle_visit_for_vehicle(doc)
 
     # 2. get latest submited vehicle visit state and update vehicle field (state)
-    latest_visit = get_latest_submited_visit(vehicle.name)
+    latest_visit = get_latest_visit(vehicle.name)
     if latest_visit:
         frappe.db.set_value("Vehicle KA", vehicle.name,
                             "state", latest_visit.state)
 
-    # 3. get latest vehicle visit with status "serviced"
-    # and update filed (current_km and last_visit_date)
+    # 3. get latest submitted vehicle visit with and update filed (current_km and last_visit_date)
     latest_serviced_visit = get_latest_submited_visit(vehicle.name)
     if latest_serviced_visit:
         frappe.db.set_value(
@@ -124,10 +123,11 @@ def update_vehicle(doc):
         frappe.db.set_value("Vehicle KA", vehicle.name, "current_km", 0)
 
 
-def get_latest_draft_visit(vehicle):
+def get_latest_visit(vehicle):
+    # Upcoming is excluded, because it is a safe state but it is not a final state
     latest_visit = frappe.get_all(
         "Vehicle Visit KA",
-        filters={"vehicle": vehicle, "docstatus": DocStatus.draft()},
+        filters={"vehicle": vehicle, "state": ["!=", VehicleStatus.UPCOMING.value]},
         order_by="maintenance_date desc",
         fields=["state"],
         limit=1,
@@ -290,4 +290,5 @@ def create_new_maintenance_visit(doc, reminding_date=None):
 def on_quotation_update(doc, event):
     vehicle_name = doc.custom_vehicle
     workflow_state = doc.workflow_state
-    frappe.set_value("Vehicle KA", vehicle_name, "last_quotation_status", workflow_state)
+    frappe.set_value("Vehicle KA", vehicle_name,
+                     "last_quotation_status", workflow_state)

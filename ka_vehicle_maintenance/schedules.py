@@ -1,7 +1,7 @@
 import frappe
 from frappe.utils import nowdate, getdate
 from frappe.query_builder import DocType
-from ka_vehicle_maintenance.enums import VehicleStatus
+from ka_vehicle_maintenance.enums import VehicleStatus, VehicleOwnershipType
 
 
 def update_state_and_send_notifications():
@@ -18,7 +18,7 @@ def update_state_and_send_notifications():
     # Fetch all documents that are not submitted and have the state "Upcoming" and reminding_date < today
     docs = (
         frappe.qb.from_(MaintenanceVisitKA)
-        .select(MaintenanceVisitKA.name)
+        .select(MaintenanceVisitKA.name, MaintenanceVisitKA.Vehicle)
         .where(
             (MaintenanceVisitKA.docstatus == 0)
             & (
@@ -39,29 +39,124 @@ def update_state_and_send_notifications():
         frappe.db.set_value(
             "Maintenance Visit KA", doc.name, "state", VehicleStatus.UNCHECKED.value
         )
-        doc.visits = []
+        frappe.db.set_value(
+            "Vehicle KA", doc.vehicle, "state", VehicleStatus.UNCHECKED.value
+        )
         vv_list = frappe.get_all(
             "Vehicle Visit KA",
             filters={"maintenance_visit": doc.name},
-            fields=["name", "parenttype"],
         )
         for vv in vv_list:
             frappe.db.set_value(
                 "Vehicle Visit KA", vv.name, "state", VehicleStatus.UNCHECKED.value
             )
-        # # Create a new notification log
-        # n = frappe.new_doc("Notification Log")
-        # n.subject = f"Reminder {index} of {docs_len} Maintenance Visit Reminder"
-        # n.email_content = "This is a reminder for your maintenance visit"
-        # n.document_type = "Maintenance Visit KA"
-        # n.document_name = doc.name
-        # n.insert()
 
     frappe.db.commit()
 
 
+def delete_LTO_maintenance_visits():
+    """
+    This method intended to run every day to make sure that all Vehicle with
+    LTO ownership_type, does not have any un submitted Maintenance Visits
+
+    Step 1: Get all Vehicles with LTO Status
+    Step 2: Get Un-submitted Maintenance Visits for each Vehicle
+    Step 3: Delete all un submitted Maintenance Visits
+    """
+    # Step 1: Get all Vehicles with LTO Status
+    VehicleKA = DocType("Vehicle KA")
+    vs = (
+        frappe.qb.from_(VehicleKA)
+        .select(VehicleKA.name)
+        .where(
+            VehicleKA.ownership_type == VehicleOwnershipType.LTO.value
+        )
+    ).run(as_dict=True)
+    if vs is None or len(vs) == 0:
+        return
+    for _, v in enumerate(vs, start=1):
+        # Step 2: Get Un-submitted Maintenance Visits for each Vehicle
+        maintenance_visits = frappe.get_all(
+            "Maintenance Visit KA",
+            filters={"vehicle": v.name, "docstatus": 0},
+        )
+        if maintenance_visits is None or len(maintenance_visits) == 0:
+            continue
+        # Step 3: Delete all un submitted Maintenance Visits
+        for mv in maintenance_visits:
+            frappe.delete_doc("Maintenance Visit KA", mv.name)
+
+
+def create_mainteance_visit_for_all_rental_vehicles():
+    """
+    This function intended to keep the number of RENTED Vehicle in sync with
+    the number of Maintenance Visits
+
+    Step 1: Get all Vehicles with ownership_type RENTED Status
+    Step 2: Get Un-submitted Maintenance Visits for each Vehicle
+    Case A: none
+        Step 3: Create a new Maintenance Visit for each Vehicle
+    Case B: one
+        Step 3: verify that the state is UPCOMING OR UNCHECKED
+    Case C: more than one
+        Step 1: verify that the latest state is UPCOMING OR UNCHECKED
+        step 2: delete the rest
+    """
+    # Step 1: Get all Vehicles with RENTED Status
+    VehicleKA = DocType("Vehicle KA")
+    vs = (
+        frappe.qb.from_(VehicleKA)
+        .select(VehicleKA.name, VehicleKA.current_km, VehicleKA.state)
+        .where(
+            VehicleKA.ownership_type == VehicleOwnershipType.RENTED.value
+        )
+    ).run(as_dict=True)
+    if vs is None or len(vs) == 0:
+        return
+    for _, v in enumerate(vs, start=1):
+        # Step 2: Get Un-submitted Maintenance Visits for each Vehicle
+        maintenance_visits = frappe.get_all(
+            "Maintenance Visit KA",
+            filters={"vehicle": v.name, "docstatus": 0},
+            order_by="maintenance_date desc",
+            fields=["name", "state"],
+        )
+        if maintenance_visits is None or len(maintenance_visits) == 0:
+            # Step A3: Create a new Maintenance Visit for each Vehicle
+            create_maintenance_visit(v)
+        elif len(maintenance_visits) == 1:
+            # Step B3: verify that the state is UPCOMING OR UNCHECKED
+            if maintenance_visits[0].state != VehicleStatus.UPCOMING.value and maintenance_visits[0].state != VehicleStatus.UNCHECKED.value:
+                frappe.delete_doc("Maintenance Visit KA",
+                                  maintenance_visits[0].name)
+                create_maintenance_visit(v)
+        elif len(maintenance_visits) > 1:
+            # Step C1: verify that the state is UPCOMING OR UNCHECKED
+            if maintenance_visits[0].state != VehicleStatus.UPCOMING.value and maintenance_visits[0].state != VehicleStatus.UNCHECKED.value:
+                frappe.delete_doc("Maintenance Visit KA",
+                                  maintenance_visits[0].name)
+                create_maintenance_visit(v)
+            # Step C3: keep the latest Un-submitted Maintenance Visit
+            for visit in maintenance_visits[1:]:
+                frappe.delete_doc("Maintenance Visit KA", visit.name)
+
+
+def create_maintenance_visit(vs):
+    today = nowdate()
+    mv = frappe.new_doc("Maintenance Visit KA")
+    mv.vehicle = vs.name
+    mv.last_km = vs.current_km
+    mv.new_km = vs.current_km
+    mv.maintenance_date = today
+    mv.state = VehicleStatus.UNCHECKED.value
+    mv.insert()
+
+
 def update_state():
     update_state_and_send_notifications()
+    delete_LTO_maintenance_visits()
+    # Make sure all vehicle have a draft MaintenanceVisitKA
+    create_mainteance_visit_for_all_rental_vehicles()
 
 
 #  bench execute ka_vehicle_maintenance.schedules.update_state
