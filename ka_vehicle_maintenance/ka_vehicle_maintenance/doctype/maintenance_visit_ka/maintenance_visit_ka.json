@@ -247,6 +247,7 @@
   {
    "fieldname": "section_break_ffso",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Details",
    "show_on_timeline": 1
   },
@@ -300,7 +301,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-01-14 14:01:53.682192",
+ "modified": "2025-01-14 15:27:57.545741",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",
