@@ -68,3 +68,38 @@ def update_company():
         )
     frappe.db.commit()
     print(f"Updated {doctype} {len(docs)} records with company '{company}'")
+
+
+def update_rider():
+    """
+    get all vs
+    if v has a rider, fill its data
+    get all mvs for this v
+    fill mv with the rider data
+    """
+    vs = frappe.get_all(
+        "Vehicle KA",
+    )
+    for v in vs:
+        v = frappe.get_doc("Vehicle KA", v.name)
+        if v.rider:
+            e = frappe.get_doc("Employee", v.rider)
+            v.rider_name = e.employee_name
+            v.phone_number = e.cell_number
+            v.whatsapp_number = e.custom_whatsapp_number
+            v.save()
+            mvs = frappe.get_all(
+                "Maintenance Visit KA",
+                filters={
+                    "vehicle": v.name,
+                    "docstatus": DocStatus.draft(),
+                },
+            )
+            for mv in mvs:
+                mv = frappe.get_doc("Maintenance Visit KA", mv.name)
+                if not mv.rider:
+                    mv.rider = v.rider
+                    mv.rider_name = v.rider_name
+                    mv.rider_phone_number = v.phone_number
+                    mv.rider_whatsapp_number = v.whatsapp_number
+                    mv.save()
