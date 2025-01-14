@@ -135,6 +135,9 @@ permission_query_conditions = {
 doc_events = {
     "Vehicle KA": {},
     "Vehicle Visit KA": {},
+    "Employee": {
+        "on_update": "ka_vehicle_maintenance.eventss.employee.on_update",
+    },
     "Maintenance Visit KA": {
         "on_update": "ka_vehicle_maintenance.events.on_maintenance_update",
         "on_trash": "ka_vehicle_maintenance.events.on_maintenance_delete",

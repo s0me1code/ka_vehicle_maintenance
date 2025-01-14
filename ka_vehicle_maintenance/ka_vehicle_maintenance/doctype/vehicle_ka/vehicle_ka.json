@@ -27,6 +27,12 @@
   "section_break_ubes",
   "closest_reminding_date",
   "visits",
+  "current_renter_detials_section",
+  "rider",
+  "rider_name",
+  "column_break_qsri",
+  "phone_number",
+  "whatsapp_number",
   "section_break_yasj",
   "quotations",
   "total",
@@ -219,11 +225,49 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Last Quotation Status"
+  },
+  {
+   "fieldname": "current_renter_detials_section",
+   "fieldtype": "Section Break",
+   "label": "Current Rider Detials"
+  },
+  {
+   "fieldname": "rider",
+   "fieldtype": "Link",
+   "label": "Rider",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "column_break_qsri",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "rider.cell_number",
+   "fetch_if_empty": 1,
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "rider.custom_whatsapp_number",
+   "fetch_if_empty": 1,
+   "fieldname": "whatsapp_number",
+   "fieldtype": "Data",
+   "label": "Whatsapp Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "rider.employee_name",
+   "fieldname": "rider_name",
+   "fieldtype": "Data",
+   "label": "Rider Name",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-02 13:19:49.263901",
+ "modified": "2025-01-14 12:51:58.507607",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

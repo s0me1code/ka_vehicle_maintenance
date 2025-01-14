@@ -10,6 +10,12 @@
   "amended_from",
   "section_break_hsas",
   "visits",
+  "rider_details_section",
+  "rider",
+  "rider_name",
+  "column_break_dizb",
+  "rider_whatsapp_number",
+  "rider_phone_number",
   "_section",
   "column_break_rcbc",
   "maintenance_date",
@@ -241,19 +247,60 @@
   {
    "fieldname": "section_break_ffso",
    "fieldtype": "Section Break",
-   "hidden": 1,
    "label": "Details",
    "show_on_timeline": 1
   },
   {
    "fieldname": "column_break_wcbw",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rider_details_section",
+   "fieldtype": "Section Break",
+   "label": "Rider Details"
+  },
+  {
+   "fetch_from": "vehicle.phone_number",
+   "fetch_if_empty": 1,
+   "fieldname": "rider_phone_number",
+   "fieldtype": "Data",
+   "label": "Rider Phone Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_dizb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "vehicle.whatsapp_number",
+   "fetch_if_empty": 1,
+   "fieldname": "rider_whatsapp_number",
+   "fieldtype": "Data",
+   "label": "Rider Whatsapp Number",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "vehicle.rider_name",
+   "fetch_if_empty": 1,
+   "fieldname": "rider_name",
+   "fieldtype": "Data",
+   "label": "Rider Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "vehicle.rider",
+   "fetch_if_empty": 1,
+   "fieldname": "rider",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Rider",
+   "options": "Employee"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-12-26 14:52:53.414405",
+ "modified": "2025-01-14 14:01:53.682192",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",

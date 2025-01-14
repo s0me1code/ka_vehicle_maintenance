@@ -87,17 +87,17 @@ def delete_LTO_maintenance_visits():
             frappe.delete_doc("Maintenance Visit KA", mv.name)
 
 
-def create_mainteance_visit_for_all_rental_vehicles():
+def sync_vehicle_with_maintenance():
     """
-    This function intended to keep the number of RENTED Vehicle in sync with
+    This function intended to sync the RENTED Vehicle in sync with
     the number of Maintenance Visits
 
     Step 1: Get all Vehicles with ownership_type RENTED Status
     Step 2: Get Un-submitted Maintenance Visits for each Vehicle
     Case A: none
-        Step 3: Create a new Maintenance Visit for each Vehicle
+        Step 1: Create a new Maintenance Visit for each Vehicle
     Case B: one
-        Step 3: verify that the state is UPCOMING OR UNCHECKED
+        Step 1: verify that the state is UPCOMING OR UNCHECKED
     Case C: more than one
         Step 1: verify that the latest state is UPCOMING OR UNCHECKED
         step 2: delete the rest
@@ -106,7 +106,16 @@ def create_mainteance_visit_for_all_rental_vehicles():
     VehicleKA = DocType("Vehicle KA")
     vs = (
         frappe.qb.from_(VehicleKA)
-        .select(VehicleKA.name, VehicleKA.current_km, VehicleKA.state)
+        .select(
+            VehicleKA.name,
+            VehicleKA.company,
+            VehicleKA.current_km,
+            VehicleKA.state,
+            VehicleKA.rider,
+            VehicleKA.rider_name,
+            VehicleKA.phone_number,
+            VehicleKA.whatsapp_number,
+        )
         .where(
             VehicleKA.ownership_type == VehicleOwnershipType.RENTED.value
         )
@@ -122,31 +131,59 @@ def create_mainteance_visit_for_all_rental_vehicles():
             fields=["name", "state"],
         )
         if maintenance_visits is None or len(maintenance_visits) == 0:
-            # Step A3: Create a new Maintenance Visit for each Vehicle
+            # Step A1: Create a new Maintenance Visit for each Vehicle
             create_maintenance_visit(v)
         elif len(maintenance_visits) == 1:
-            # Step B3: verify that the state is UPCOMING OR UNCHECKED
-            if maintenance_visits[0].state != VehicleStatus.UPCOMING.value and maintenance_visits[0].state != VehicleStatus.UNCHECKED.value:
-                frappe.delete_doc("Maintenance Visit KA",
-                                  maintenance_visits[0].name)
-                create_maintenance_visit(v)
+            # Step B1: verify that the state is UPCOMING OR UNCHECKED
+            verify_vehicle_with_maintenance(v, maintenance_visits[0])
         elif len(maintenance_visits) > 1:
             # Step C1: verify that the state is UPCOMING OR UNCHECKED
-            if maintenance_visits[0].state != VehicleStatus.UPCOMING.value and maintenance_visits[0].state != VehicleStatus.UNCHECKED.value:
-                frappe.delete_doc("Maintenance Visit KA",
-                                  maintenance_visits[0].name)
-                create_maintenance_visit(v)
-            # Step C3: keep the latest Un-submitted Maintenance Visit
+            verify_vehicle_with_maintenance(v, maintenance_visits[0])
+            # Step C2: keep the latest Un-submitted Maintenance Visit
             for visit in maintenance_visits[1:]:
                 frappe.delete_doc("Maintenance Visit KA", visit.name)
 
 
-def create_maintenance_visit(vs):
+def verify_vehicle_with_maintenance(v, mv):
+    """
+    Verify the Vehicle is up to date with the visit otherwise create a new one
+    Steps:
+    1. Get the Vehicle data and get the Maintenance Data
+    Case A: as expected
+    Case B: create a new one with UNCHECKED state
+    """
+    if mv is None:
+        print("\n\n\n No Maintenance Visit for this vehicle")
+        create_maintenance_visit(v)
+        return
+    if mv.state != VehicleStatus.UPCOMING.value and mv.state != VehicleStatus.UNCHECKED.value:
+        print("\n\n\n Maintenance Visit is not in UPCOMING or UNCHECKED state")
+        frappe.delete_doc("Maintenance Visit KA", mv.name)
+        create_maintenance_visit(v)
+        return
+    if mv.rider != v.rider:
+        print("\n\n\n Rider is not the same")
+        mv = frappe.get_doc("Maintenance Visit KA", mv.name)
+        mv.rider = v.rider
+        mv.rider_name = v.rider_name
+        mv.rider_phone_number = v.phone_number
+        mv.rider_whatsapp_number = v.whatsapp_number
+        mv.save()
+        return
+
+
+
+def create_maintenance_visit(v):
     today = nowdate()
     mv = frappe.new_doc("Maintenance Visit KA")
-    mv.vehicle = vs.name
-    mv.last_km = vs.current_km
-    mv.new_km = vs.current_km
+    mv.vehicle = v.name
+    mv.company = v.company
+    mv.last_km = v.current_km
+    mv.new_km = v.current_km
+    mv.rider = v.rider
+    mv.rider_name = v.rider_name
+    mv.rider_phone_number = v.phone_number
+    mv.rider_whatsapp_number = v.whatsapp_number
     mv.maintenance_date = today
     mv.state = VehicleStatus.UNCHECKED.value
     mv.insert()
@@ -156,7 +193,7 @@ def update_state():
     update_state_and_send_notifications()
     delete_LTO_maintenance_visits()
     # Make sure all vehicle have a draft MaintenanceVisitKA
-    create_mainteance_visit_for_all_rental_vehicles()
+    sync_vehicle_with_maintenance()
 
 
 #  bench execute ka_vehicle_maintenance.schedules.update_state
