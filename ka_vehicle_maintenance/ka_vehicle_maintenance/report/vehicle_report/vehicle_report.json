@@ -10,7 +10,7 @@
  "is_standard": "Yes",
  "letter_head": "",
  "letterhead": null,
- "modified": "2024-08-13 12:49:24.178219",
+ "modified": "2025-01-19 15:58:50.875747",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle Report",
@@ -21,7 +21,8 @@
  "report_type": "Script Report",
  "roles": [
   {
-   "role": "System Manager"
+   "role": "KA Vehicle Maintenance"
   }
- ]
+ ],
+ "timeout": 0
 }
