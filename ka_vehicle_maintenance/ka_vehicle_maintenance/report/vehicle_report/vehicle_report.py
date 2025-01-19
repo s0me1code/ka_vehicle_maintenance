@@ -61,7 +61,6 @@ def execute(filters=None):
     ]
 
     vehicles = get_vehicle(filters)
-    print(f"\n\n\nvehicles:{len(vehicles)}")
     data = [
         {
             "name": row.name,
