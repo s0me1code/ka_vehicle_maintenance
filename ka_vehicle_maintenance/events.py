@@ -127,7 +127,8 @@ def get_latest_visit(vehicle):
     # Upcoming is excluded, because it is a safe state but it is not a final state
     latest_visit = frappe.get_all(
         "Vehicle Visit KA",
-        filters={"vehicle": vehicle, "state": ["!=", VehicleStatus.UPCOMING.value]},
+        filters={"vehicle": vehicle, "state": [
+            "!=", VehicleStatus.UPCOMING.value]},
         order_by="maintenance_date desc",
         fields=["state"],
         limit=1,
@@ -285,6 +286,60 @@ def create_new_maintenance_visit(doc, reminding_date=None):
             reminding_date,
         )
     return mv
+
+
+@frappe.whitelist()
+def prepare_rent_application_to_close(doc):
+    if isinstance(doc, str):
+        doc = json.loads(doc)
+
+        try:
+            rider = doc["rider"]
+        except KeyError:
+            frappe.msgprint("There is no rider assigned to this vehicle")
+            return True
+
+        doc = AttrDict(doc)
+    elif isinstance(doc, dict):
+        doc = AttrDict(doc)
+
+    try:
+        vehicle = frappe.get_doc("Vehicle KA", doc.vehicle)
+        try:
+            rider = frappe.get_doc("Employee", doc.rider)
+            rent_applications = frappe.get_all(
+                "Rent Application KA",
+                filters={
+                    "vehicle": vehicle.name,
+                    "emp": rider.name,
+                    "docstatus": DocStatus.submitted(),
+                    "is_active": 1,
+                },
+            )
+            if len(rent_applications) == 0:
+                frappe.msgprint(
+                    "Rider {0} have no Active Rental Application \
+                    for vehicle {1}".format(
+                        rider.name, vehicle.name)
+                )
+            if len(rent_applications) > 1:
+                frappe.msgprint(
+                    "Rider {0} have Multiple Active Rental Applications \
+                    for vehicle {1}".format(
+                        rider.name, vehicle.name)
+                )
+            for ra in rent_applications:
+                rent_app = frappe.get_doc("Rent Application KA", ra.name)
+                if (vehicle):
+                    rent_app.create_new_rent_application_with_different_vehicle(
+                        vehicle, None)
+                rent_app.prepare_to_close()
+            return True
+
+        except frappe.DoesNotExistError:
+            frappe.msgprint("Rider not found")
+    except frappe.DoesNotExistError:
+        frappe.throw("Vehicle not found")
 
 
 def on_quotation_update(doc, event):

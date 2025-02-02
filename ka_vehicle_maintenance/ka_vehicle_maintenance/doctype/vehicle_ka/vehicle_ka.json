@@ -9,6 +9,7 @@
   "license_plate",
   "model",
   "year",
+  "pay_per_month",
   "column_break_xtky",
   "current_km",
   "last_visit_date",
@@ -17,12 +18,11 @@
   "ownership_status",
   "ownership_type",
   "lto_doc",
+  "availability_status",
   "column_break_ijmj",
   "maintenace_visit_status",
   "called",
-  "need_visit",
   "visited",
-  "visit_late",
   "state",
   "section_break_ubes",
   "closest_reminding_date",
@@ -147,23 +147,6 @@
    "read_only": 1
   },
   {
-   "default": "No",
-   "fieldname": "need_visit",
-   "fieldtype": "Select",
-   "hidden": 1,
-   "label": "Does the Vehicle Needed Maintenance?",
-   "options": "No\nYes",
-   "read_only": 1
-  },
-  {
-   "default": "No",
-   "fieldname": "visit_late",
-   "fieldtype": "Select",
-   "label": "Did the Rider Visit the Garage Late?",
-   "options": "No\nYes",
-   "read_only": 1
-  },
-  {
    "fieldname": "ownership_status",
    "fieldtype": "Heading",
    "label": "Ownership Status"
@@ -263,11 +246,24 @@
    "fieldtype": "Data",
    "label": "Rider Name",
    "read_only": 1
+  },
+  {
+   "default": "Available",
+   "fieldname": "availability_status",
+   "fieldtype": "Select",
+   "label": "Availability Status",
+   "options": "On Road\nIn Garage\nAvailable"
+  },
+  {
+   "fieldname": "pay_per_month",
+   "fieldtype": "Currency",
+   "label": "Pay Per Month",
+   "non_negative": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-14 12:51:58.507607",
+ "modified": "2025-02-02 13:52:12.335734",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

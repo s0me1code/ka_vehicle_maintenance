@@ -13,7 +13,14 @@ const VehicleStatus = {
 
     UPCOMING: "Upcoming",
     UNCHECKED: "Unchecked",
-};
+}
+
+const VehicleAvailabilityStatus = {
+    IN_GARAGE: "In Garage",
+    On_Road: "On Road",
+    AVAILABLE: "Available"
+}
+
 const differanceBWMaintenanceAndRemindingDate = -1
 const onIsNew = (frm) => (frm.is_new() &&
     frappe.msgprint({
@@ -134,7 +141,6 @@ frappe.ui.form.on("Maintenance Visit KA", {
     },
     validate(frm) {
         const distance = frm.doc.distance
-        console.log("d",distance)
         if (distance < 0) {
             frappe.throw({
                 title: __('Wrong KM'),
@@ -168,7 +174,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
             }
         }
     },
-    before_submit(frm) {
+    availability_status(frm) {
         console.log("before_submit")
         var new_km = frm.doc.new_km;
         if (!new_km || new_km == 0) {
@@ -178,41 +184,55 @@ frappe.ui.form.on("Maintenance Visit KA", {
                 message: __("Please enter the new KM"),
             });
         }
-        switch (frm.doc.state) {
-            case VehicleStatus.PENDING_APPROVAL:
-            case VehicleStatus.UNCHECKED:
-            case VehicleStatus.UPCOMING:
-            case VehicleStatus.UNUSED:
-                // Prevent the default submit action
-                frappe.throw({
-                    title: __("Unvalid State"),
-                    message: __("You can not submit document in this State"),
-                });
-                break;
-
-            case VehicleStatus.SERVICED:
-            case VehicleStatus.OVERDUE:
-                console.log("before_submit")
-                console.log("ssoo",frm.doc)
-                if (!frm.doc.attachment) {
-                    // Prevent the default submit action
-                    frappe.throw({
-                        title: __("Missing Attachment"),
-                        message: __("Attach the Document in order to submit"),
-                    });
-                }
-                const after_8_days = frappe.datetime.add_days(
-                    frm.doc.maintenance_date,
-                    8
+        switch (frm.doc.availability_status) {
+            case VehicleAvailabilityStatus.IN_GARAGE:
+                frappe.validated = false;
+                frappe.prompt(
+                    [{
+                        label: __("Reminding Date"),
+                        fieldname: "date",
+                        fieldtype: "Date",
+                    },
+                    {
+                        label: __("New Assigned Vehicle"),
+                        fieldname: "vehicle",
+                        fieldtype: "Link",
+                        options: "Vehicle KA",
+                        filters: {
+                            "availability_status": VehicleAvailabilityStatus.AVAILABLE
+                        }
+                    }],
+                    (values) => {
+                        if (!values.date)
+                            frappe.throw({
+                                title: __("Missing Next Reminding Date"),
+                                message: __(
+                                    "Please enter the next reminding date"
+                                ),
+                            });
+                        if (!values.vehicle)
+                            frappe.throw({
+                                title: __("Missing New Assigned Vehicle"),
+                                message: __(
+                                    "Please enter the new assigned vehicle"
+                                ),
+                            });
+                        frm.next_reminding_date = values.date
+                        createNewMV(frm, values.date);
+                        rentApplicationPreparedToClose = prepareRentApplicationToClose(frm, values);
+                        if (!frm.doc.submitted_at)
+                            frm.doc.submitted_at = frm.doc.modified;
+                        console.log({
+                            rentApplicationPreparedToClose,
+                        })
+                        if (rentApplicationPreparedToClose)
+                            frm.save("Submit");
+                    },
+                    __("Next Reminding Date"),
+                    __("Create")
                 );
-                createNewMV(frm, after_8_days);
-
                 break;
-
-            case VehicleStatus.NOTIFIED:
-            case VehicleStatus.EARLY_NOTIFIED:
-            case VehicleStatus.IN_GARAGE:
-                // Prevent the default submit action
+            case VehicleAvailabilityStatus.AVAILABLE:
                 frappe.validated = false;
                 frappe.prompt(
                     {
@@ -230,20 +250,80 @@ frappe.ui.form.on("Maintenance Visit KA", {
                             });
                         frm.next_reminding_date = values.date
                         createNewMV(frm, values.date);
+                        prentApplicationPreparedToClose = repareRentApplicationToClose(frm);
                         if (!frm.doc.submitted_at)
                             frm.doc.submitted_at = frm.doc.modified;
-                        // save the doc
-                        // frm.save_or_update();
-                        frm.save("Submit");
+                        if (rentApplicationPreparedToClose)
+                            frm.save("Submit");
                     },
                     __("Next Reminding Date"),
                     __("Create")
                 );
                 break;
-
-            default:
-                break;
         }
+        if (frm.doc.avalibility_status == VehicleAvailabilityStatus.On_Road)
+            switch (frm.doc.state) {
+                case VehicleStatus.PENDING_APPROVAL:
+                case VehicleStatus.UNCHECKED:
+                case VehicleStatus.UPCOMING:
+                case VehicleStatus.UNUSED:
+                    // Prevent the default submit action
+                    frappe.throw({
+                        title: __("Unvalid State"),
+                        message: __("You can not submit document in this State"),
+                    });
+                    break;
+
+                case VehicleStatus.SERVICED:
+                case VehicleStatus.OVERDUE:
+                    if (!frm.doc.attachment) {
+                        // Prevent the default submit action
+                        frappe.throw({
+                            title: __("Missing Attachment"),
+                            message: __("Attach the Document in order to submit"),
+                        });
+                    }
+                    const after_8_days = frappe.datetime.add_days(
+                        frm.doc.maintenance_date,
+                        8
+                    );
+                    createNewMV(frm, after_8_days);
+
+                    break;
+
+                case VehicleStatus.NOTIFIED:
+                case VehicleStatus.EARLY_NOTIFIED:
+                    frappe.validated = false;
+                    frappe.prompt(
+                        {
+                            label: __("Reminding Date"),
+                            fieldname: "date",
+                            fieldtype: "Date",
+                        },
+                        (values) => {
+                            if (!values.date)
+                                frappe.throw({
+                                    title: __("Missing Next Reminding Date"),
+                                    message: __(
+                                        "Please enter the next reminding date"
+                                    ),
+                                });
+                            frm.next_reminding_date = values.date
+                            createNewMV(frm, values.date);
+                            if (!frm.doc.submitted_at)
+                                frm.doc.submitted_at = frm.doc.modified;
+                            // save the doc
+                            // frm.save_or_update();
+                            frm.save("Submit");
+                        },
+                        __("Next Reminding Date"),
+                        __("Create")
+                    );
+                    break;
+
+                default:
+                    break;
+            }
         if (!frm.doc.submitted_at) frm.doc.submitted_at = frm.doc.modified;
     },
 });
@@ -258,6 +338,29 @@ const createNewMV = (frm, reminding_date) => {
         // callback: ({ message }) => {
         //     console.log(message);
         // },
+    });
+};
+const prepareRentApplicationToClose = (frm) => {
+    frappe.call({
+        method: "ka_vehicle_maintenance.events.prepare_rent_application_to_close",
+        args: {
+            doc: frm.doc,
+        },
+        callback: ({ message }) => {
+            console.log("rentApplicationPreparedToClose", message);
+        },
+    });
+};
+const createNewRentApplication = (frm, values) => {
+    frappe.call({
+        method: "ka_vehicle_maintenance.events.create_new_rent_application",
+        args: {
+            doc: frm.doc,
+            values: values,
+        },
+        callback: ({ message }) => {
+            console.log("rentApplicationCreated", message);
+        },
     });
 };
 

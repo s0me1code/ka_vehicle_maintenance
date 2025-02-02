@@ -20,3 +20,8 @@ class VehicleStatus(Enum):
 
     UPCOMING = "Upcoming"
     UNCHECKED = "Unchecked"
+
+
+class AvailabilityStatus(Enum):
+    ON_ROAD = "On Road"
+    IN_GARAGE = "In Garage"
