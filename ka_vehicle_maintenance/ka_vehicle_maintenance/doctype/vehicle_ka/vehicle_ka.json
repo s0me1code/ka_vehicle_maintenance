@@ -75,12 +75,12 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Unused",
+   "default": "Unchecked",
    "fieldname": "state",
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "State",
-   "options": "Unused\nIn Garage\nUpcoming\nUnchecked\nEarly Notified\nNotified\nServiced\nOverdue\nPending Approval",
+   "options": "\nUnchecked\nNotified\nServiced",
    "read_only": 1
   },
   {
@@ -271,6 +271,7 @@
   {
    "fieldname": "tab_4_tab",
    "fieldtype": "Tab Break",
+   "hidden": 1,
    "label": "Quotations"
   },
   {
@@ -289,7 +290,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-02 16:43:08.026232",
+ "modified": "2025-02-03 13:12:21.605403",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

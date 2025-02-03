@@ -1,7 +1,6 @@
 // Copyright (c) 2024, ahmed.g.abdin and contributors
 // For license information, please see license.txt
 const VehicleStatus = {
-    UNUSED: "Unused",
     SERVICED: "Serviced",
     NOTIFIED: "Notified",
     UPCOMING: "Upcoming",
@@ -109,25 +108,6 @@ frappe.ui.form.on("Maintenance Visit KA", {
     maintenance_visit_items(frm) {
         calcTotal(frm)
     },
-    visit_late(frm) {
-        // TODO: for test remove when done
-        // frappe.call({
-        //     method: "ka_vehicle_maintenance.whitelist.sendemail"
-        //     , args: {
-        //         "args": frm.doc.name
-        //     }
-        //     , callback: function (r) {
-        //         if (r.message) {
-        //             location.reload();
-        //         }
-        //     }
-        // })
-        // console.log("email sent");
-        determineState(frm);
-    },
-    // need_visit(frm) {
-    //     determineState(frm);
-    // },
     new_km(frm) {
         updateDistance(frm);
     },
@@ -335,9 +315,6 @@ const createNewMV = (frm, reminding_date) => {
             doc: frm.doc,
             reminding_date: reminding_date,
         },
-        // callback: ({ message }) => {
-        //     console.log(message);
-        // },
     });
 };
 const prepareRentApplicationToClose = (frm, values) => {
@@ -365,41 +342,20 @@ const translateState = (frm) => {
     switch (state) {
         case VehicleStatus.SERVICED:
             frm.set_value("called", "Yes");
-            // frm.set_value("need_visit", "Yes");
             frm.set_value("visited", "Yes");
-            frm.set_value("visit_late", "No");
             break;
         case VehicleStatus.OVERDUE:
             frm.set_value("called", "Yes");
-            // frm.set_value("need_visit", "Yes");
             frm.set_value("visited", "Yes");
-            frm.set_value("visit_late", "Yes");
             break;
         case VehicleStatus.NOTIFIED:
             frm.set_value("called", "Yes");
-            // frm.set_value("need_visit", "Yes");
             frm.set_value("visited", "No");
-            frm.set_value("visit_late", "No");
-            break;
-        case VehicleStatus.EARLY_NOTIFIED:
-            frm.set_value("called", "Yes");
-            // frm.set_value("need_visit", "No");
-            frm.set_value("visited", "No");
-            frm.set_value("visit_late", "No");
-            break;
-        case VehicleStatus.PENDING_APPROVAL:
-            frm.set_value("called", "Yes");
-            // frm.set_value("need_visit", "Yes");
-            frm.set_value("visited", "Yes");
-            frm.set_value("visit_late", "No");
             break;
         case VehicleStatus.UNCHECKED:
         case VehicleStatus.UPCOMING:
-        case VehicleStatus.UNUSED:
             frm.set_value("called", "No");
-            // frm.set_value("need_visit", "No");
             frm.set_value("visited", "No");
-            frm.set_value("visit_late", "No");
             break;
     }
 };
@@ -407,73 +363,21 @@ const translateState = (frm) => {
 const determineState = (frm) => {
     if (frm.doc.docstatus === 1) return;
     const called = frm.doc.called;
-    // const need_visit = frm.doc.need_visit;
     const visited = frm.doc.visited;
-    const visit_late = frm.doc.visit_late;
-
-    // allow write only if yes based on order
-    // if (called === "No") {
-    // frm.set_df_property("need_visit", "read_only", 1);
-    //     frm.set_df_property("visited", "read_only", 1);
-    //     frm.set_df_property("visit_late", "read_only", 1);
-    // } else {
-    // frm.set_df_property("need_visit", "read_only", 0);
-    //     frm.set_df_property("visited", "read_only", 0);
-    //     frm.set_df_property("visit_late", "read_only", 0);
-    // }
-    // if (need_visit === "No") {
-    //     frm.set_df_property("visited", "read_only", 1);
-    //     frm.set_df_property("visit_late", "read_only", 1);
-    // } else {
-    //     frm.set_df_property("visited", "read_only", 0);
-    //     frm.set_df_property("visit_late", "read_only", 0);
-    // }
-    // if (visited === "No") {
-    //     frm.set_df_property("visit_late", "read_only", 1);
-    // } else {
-    //     frm.set_df_property("visit_late", "read_only", 0);
-    // }
 
     if (
         called === "Yes" &&
-        // need_visit === "Yes" &&
-        visited === "Yes" &&
-        visit_late === "No"
+        visited === "Yes"
     ) {
         frm.set_value("state", VehicleStatus.SERVICED);
     } else if (
         called === "Yes" &&
-        // need_visit === "Yes" &&
-        visited === "Yes" &&
-        visit_late === "Yes"
-    ) {
-        frm.set_value("state", VehicleStatus.OVERDUE);
-    } else if (
-        called === "Yes" &&
-        // need_visit === "Yes" &&
-        visited === "No" &&
-        visit_late === "No"
+        visited === "No"
     ) {
         frm.set_value("state", VehicleStatus.NOTIFIED);
     } else if (
-        called === "Yes" &&
-        // need_visit === "No" &&
-        visited === "No" &&
-        visit_late === "No"
-    ) {
-        frm.set_value("state", VehicleStatus.EARLY_NOTIFIED);
-    } else if (
-        called === "Yes" &&
-        // need_visit === "Yes" &&
-        visited === "Yes" &&
-        visit_late === "No"
-    ) {
-        frm.set_value("state", VehicleStatus.PENDING_APPROVAL);
-    } else if (
         called === "No" &&
-        // need_visit === "No" &&
-        visited === "No" &&
-        visit_late === "No"
+        visited === "No"
     ) {
         frm.set_value("state", VehicleStatus.UNCHECKED); // Or UNCHECKED, depending on the logic
     }

@@ -3,15 +3,8 @@
 
 const VehicleStatus = {
     SERVICED: "Serviced",
-    OVERDUE: "Overdue",
-
     NOTIFIED: "Notified",
-    EARLY_NOTIFIED: "Early Notified",
-
-    PENDING_APPROVAL: "Pending Approval",
     IN_GARAGE: "In Garage",
-
-    UPCOMING: "Upcoming",
     UNCHECKED: "Unchecked",
 };
 const OwnershipStatus = {
@@ -25,46 +18,46 @@ const calcTotal = (frm) => {
     frm.set_value('total', visits_total + quotations_total)
 }
 
-const populateQuotations = (frm) => {
-    console.log("populateQuotations ")
-    frappe.call({
-        method: "frappe.client.get_list",
-        args: {
-            doctype: "Quotation",
-            filters: [
-                ["custom_vehicle", "=", frm.doc.name],
-            ],
-            fields: ["name", "custom_vehicle", "grand_total", "creation", "status", "workflow_state"],
-            order_by: "creation desc",
-        },
-        callback: function(res) {
-            if (res.message) {
-                const quotations = res.message;
-                console.log(quotations)
-                const isDifferent = areItemsDifferent(frm.doc.quotations, quotations)
-                if (isDifferent) {
-                    frm.clear_table("quotations");
-                    let total = 0
-                    quotations.forEach(quot => {
-                        let child = frm.add_child("quotations");
-                        child.quotation = quot.name;
-                        child.vehicle = quot.custom_vehicle;
-                        child.total = quot.grand_total;
-                        child.status = quot.status;
-                        total += quot.grand_total;
-                    });
-                    //frm.set_value('last_quotation_status', quotations[0].workflow_state)
-                    console.log(quotations)
-                    frm.set_value('total', total)
-                    frm.refresh_field("quotations");
-                }
-            } else {
-                frm.clear_table("quotations");
-                frm.refresh_field("quotations");
-            }
-        }
-    });
-}
+// const populateQuotations = (frm) => {
+//     console.log("populateQuotations ")
+//     frappe.call({
+//         method: "frappe.client.get_list",
+//         args: {
+//             doctype: "Quotation",
+//             filters: [
+//                 ["custom_vehicle", "=", frm.doc.name],
+//             ],
+//             fields: ["name", "custom_vehicle", "grand_total", "creation", "status", "workflow_state"],
+//             order_by: "creation desc",
+//         },
+//         callback: function(res) {
+//             if (res.message) {
+//                 const quotations = res.message;
+//                 console.log(quotations)
+//                 const isDifferent = areItemsDifferent(frm.doc.quotations, quotations)
+//                 if (isDifferent) {
+//                     frm.clear_table("quotations");
+//                     let total = 0
+//                     quotations.forEach(quot => {
+//                         let child = frm.add_child("quotations");
+//                         child.quotation = quot.name;
+//                         child.vehicle = quot.custom_vehicle;
+//                         child.total = quot.grand_total;
+//                         child.status = quot.status;
+//                         total += quot.grand_total;
+//                     });
+//                     //frm.set_value('last_quotation_status', quotations[0].workflow_state)
+//                     console.log(quotations)
+//                     frm.set_value('total', total)
+//                     frm.refresh_field("quotations");
+//                 }
+//             } else {
+//                 frm.clear_table("quotations");
+//                 frm.refresh_field("quotations");
+//             }
+//         }
+//     });
+// }
 
 function areItemsDifferent(currentItems = [], newItems = []) {
     if (newItems.length !== currentItems.length) {
@@ -95,8 +88,8 @@ frappe.ui.form.on("Vehicle KA", {
         toggleClosestRemindingDate(frm)
         translateState(frm);
         reorderChildTable(frm);
-        populateQuotations(frm);
-        calcTotal(frm)
+        // populateQuotations(frm);
+        // calcTotal(frm)
     },
     refresh(frm) {
         // Custom buttons in groups
@@ -105,7 +98,7 @@ frappe.ui.form.on("Vehicle KA", {
         //     someFuntion();
         // });
         reorderChildTable(frm);
-        calcTotal(frm)
+        // calcTotal(frm)
     },
     before_save(frm) {
         validateLTODoc(frm)
@@ -172,40 +165,40 @@ const translateState = (frm) => {
     switch (state) {
         case VehicleStatus.SERVICED:
             frm.set_value("called", "Yes");
-            frm.set_value("need_visit", "Yes");
+            // frm.set_value("need_visit", "Yes");
             frm.set_value("visited", "Yes");
-            frm.set_value("visit_late", "No");
+            // frm.set_value("visit_late", "No");
             break;
-        case VehicleStatus.OVERDUE:
-            frm.set_value("called", "Yes");
-            frm.set_value("need_visit", "Yes");
-            frm.set_value("visited", "Yes");
-            frm.set_value("visit_late", "Yes");
-            break;
+        // case VehicleStatus.OVERDUE:
+        //     frm.set_value("called", "Yes");
+        //     frm.set_value("need_visit", "Yes");
+        //     frm.set_value("visited", "Yes");
+        //     frm.set_value("visit_late", "Yes");
+        //     break;
         case VehicleStatus.NOTIFIED:
             frm.set_value("called", "Yes");
             frm.set_value("need_visit", "Yes");
             frm.set_value("visited", "No");
             frm.set_value("visit_late", "No");
             break;
-        case VehicleStatus.EARLY_NOTIFIED:
-            frm.set_value("called", "Yes");
-            frm.set_value("need_visit", "No");
-            frm.set_value("visited", "No");
-            frm.set_value("visit_late", "No");
-            break;
-        case VehicleStatus.PENDING_APPROVAL:
-            frm.set_value("called", "Yes");
-            frm.set_value("need_visit", "Yes");
-            frm.set_value("visited", "Yes");
-            frm.set_value("visit_late", "No");
-            break;
+        // case VehicleStatus.EARLY_NOTIFIED:
+        //     frm.set_value("called", "Yes");
+        //     frm.set_value("need_visit", "No");
+        //     frm.set_value("visited", "No");
+        //     frm.set_value("visit_late", "No");
+        //     break;
+        // case VehicleStatus.PENDING_APPROVAL:
+        //     frm.set_value("called", "Yes");
+        //     frm.set_value("need_visit", "Yes");
+        //     frm.set_value("visited", "Yes");
+        //     frm.set_value("visit_late", "No");
+        //     break;
         case VehicleStatus.UNCHECKED:
         case VehicleStatus.UPCOMING:
             frm.set_value("called", "No");
-            frm.set_value("need_visit", "No");
+            // frm.set_value("need_visit", "No");
             frm.set_value("visited", "No");
-            frm.set_value("visit_late", "No");
+            // frm.set_value("visit_late", "No");
             break;
     }
     // frm.save();
