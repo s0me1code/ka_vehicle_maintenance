@@ -194,8 +194,8 @@ frappe.ui.form.on("Maintenance Visit KA", {
                                 },
                             },
                             callback: function(r) {
-                                console.log(r)
-                                let vehicleList = response.message;
+                                console.log({ r })
+                                let vehicleList = r.message;
                                 if (!values.date)
                                     frappe.throw({
                                         title: __("Missing Next Reminding Date"),
@@ -203,7 +203,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
                                             "Please enter the next reminding date"
                                         ),
                                     });
-                                if (vehicleList && vehicleList.length == 0 && !values.vehicle)
+                                if (vehicleList && vehicleList.length > 0 && !values.vehicle)
                                     frappe.throw({
                                         title: __("Missing New Assigned Vehicle"),
                                         message: __(
@@ -221,7 +221,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
                                 console.log({
                                     rentApplicationPreparedToClose,
                                 })
-                                if (rentApplicationPreparedToClose)
+                                if (!vehicleList || vehicleList.length == 0 || rentApplicationPreparedToClose)
                                     frm.save("Submit");
                             }
                         })

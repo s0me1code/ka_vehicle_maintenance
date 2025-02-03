@@ -1,10 +1,12 @@
 import frappe
 from frappe.model.docstatus import DocStatus
+from ka_vehicle_maintenance.enums import AvailabilityStatus
 
 
 #  bench execute ka_vehicle_maintenance.one_time_run.one_time_run
 def one_time_run():
-    vehicels = frappe.get_all("Vehicle KA", filters={"state": ["=", "In Garage"]})
+    vehicels = frappe.get_all("Vehicle KA", filters={
+                              "state": ["=", "In Garage"]})
     for vehicle in vehicels:
         visit = get_latest_draft_visit(vehicle.name)
         print(visit)
@@ -103,3 +105,18 @@ def update_rider():
                     mv.rider_phone_number = v.phone_number
                     mv.rider_whatsapp_number = v.whatsapp_number
                     mv.save()
+
+
+def update_vehicle():
+    vs = frappe.get_all(
+        "Vehicle KA",
+    )
+    for v in vs:
+        v = frappe.get_doc("Vehicle KA", v.name)
+        if v.rider:
+            e = frappe.get_doc("Employee", v.rider)
+            v.rider_name = e.employee_name
+            v.phone_number = e.cell_number
+            v.whatsapp_number = e.custom_whatsapp_number
+            v.aviailability_status = AvailabilityStatus.ON_ROAD.value
+            v.save()

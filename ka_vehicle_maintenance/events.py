@@ -325,18 +325,19 @@ def prepare_rent_application_to_close(doc, values):
                     "is_active": 1,
                 },
             )
-            if len(rent_applications) == 0:
-                frappe.msgprint(
-                    "Rider {0} have no Active Rental Application \
-                    for vehicle {1}".format(
-                        rider.name, vehicle.name)
-                )
-            if len(rent_applications) > 1:
-                frappe.msgprint(
-                    "Rider {0} have Multiple Active Rental Applications \
-                    for vehicle {1}".format(
-                        rider.name, vehicle.name)
-                )
+            # # NOTE: those being commented since they does not show message after submmition
+            # if len(rent_applications) == 0:
+            #     frappe.msgprint(
+            #         "Rider {0} have no Active Rental Application \
+            #         for vehicle {1}".format(
+            #             rider.name, vehicle.name)
+            #     )
+            # if len(rent_applications) > 1:
+            #     frappe.msgprint(
+            #         "Rider {0} have Multiple Active Rental Applications \
+            #         for vehicle {1}".format(
+            #             rider.name, vehicle.name)
+            #     )
             for ra in rent_applications:
                 rent_app = frappe.get_doc("Rent Application KA", ra.name)
                 rent_app.prepare_to_close()
