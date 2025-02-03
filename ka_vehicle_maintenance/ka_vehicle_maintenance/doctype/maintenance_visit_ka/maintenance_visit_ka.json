@@ -283,17 +283,6 @@
    "read_only": 1
   },
   {
-   "default": "On Road",
-   "depends_on": "eval:doc.ownership_type==\"Rental\"",
-   "fetch_from": "vehicle.availability_status",
-   "fetch_if_empty": 1,
-   "fieldname": "availability_status",
-   "fieldtype": "Select",
-   "label": "Availability Status",
-   "mandatory_depends_on": "eval:doc.ownership_type==\"Rental\"",
-   "options": "On Road\nIn Garage\nAvailable"
-  },
-  {
    "fieldname": "ownership_type",
    "fieldtype": "Select",
    "label": "Ownership Type",
@@ -306,12 +295,23 @@
    "fieldtype": "Attach",
    "label": "LTO Document",
    "mandatory_depends_on": "eval:doc.ownership_type==\"LTO\""
+  },
+  {
+   "default": "On Road",
+   "depends_on": "eval:doc.ownership_type==\"Rental\"",
+   "fetch_from": "vehicle.availability_status",
+   "fetch_if_empty": 1,
+   "fieldname": "availability_status",
+   "fieldtype": "Select",
+   "label": "Availability Status",
+   "mandatory_depends_on": "eval:doc.ownership_type==\"Rental\"",
+   "options": "On Road\nIn Garage\nAvailable"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-02 16:51:54.780658",
+ "modified": "2025-02-03 16:11:05.058174",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",

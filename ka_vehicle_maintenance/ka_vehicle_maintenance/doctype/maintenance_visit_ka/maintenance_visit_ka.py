@@ -39,12 +39,13 @@ class MaintenanceVisitKA(Document):
         if self.ownership_type == VehicleOwnershipType.LTO.value:
             vehicle.ownership_type = self.ownership_type
             vehicle.lto_doc = self.lto_doc
-        if self.availablity_status != AvailabilityStatus.ON_ROAD.value:
-            vehicle.availablity_status = self.availablity_status
+        if self.availability_status != AvailabilityStatus.ON_ROAD.value:
+            vehicle.availability_status = self.availability_status
             vehicle.rider = None
             vehicle.rider_name = None
             vehicle.whatsapp_number = None
             vehicle.phone_number = None
+        vehicle.save()
 
     def on_cancel(self):
         self.remove_from_vehicle()

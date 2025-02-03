@@ -150,7 +150,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
             }
         }
     },
-    availability_status(frm) {
+    before_submit(frm) {
         console.log("before_submit")
         var new_km = frm.doc.new_km;
         if (!new_km || new_km == 0) {
@@ -160,7 +160,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
                 message: __("Please enter the new KM"),
             });
         }
-        if (frm.ownership_type == VehicleOwnershipType.LTO) {
+        if (frm.doc.ownership_type == VehicleOwnershipType.LTO) {
             prepareRentApplicationToClose(frm, {})
             return
         }
@@ -179,34 +179,52 @@ frappe.ui.form.on("Maintenance Visit KA", {
                         fieldtype: "Link",
                         options: "Vehicle KA",
                         filters: {
+                            "ownership_type": VehicleOwnershipType.RENTAL,
                             "availability_status": VehicleAvailabilityStatus.AVAILABLE
                         }
                     }],
                     (values) => {
-                        if (!values.date)
-                            frappe.throw({
-                                title: __("Missing Next Reminding Date"),
-                                message: __(
-                                    "Please enter the next reminding date"
-                                ),
-                            });
-                        if (!values.vehicle)
-                            frappe.throw({
-                                title: __("Missing New Assigned Vehicle"),
-                                message: __(
-                                    "Please enter the new assigned vehicle"
-                                ),
-                            });
-                        frm.next_reminding_date = values.date
-                        createNewMV(frm, values.date);
-                        rentApplicationPreparedToClose = prepareRentApplicationToClose(frm, values);
-                        if (!frm.doc.submitted_at)
-                            frm.doc.submitted_at = frm.doc.modified;
-                        console.log({
-                            rentApplicationPreparedToClose,
+                        frappe.call({
+                            method: 'frappe.client.get_list',
+                            args: {
+                                doctype: 'Vehicle KA',
+                                filters: {
+                                    "ownership_type": VehicleOwnershipType.RENTAL,
+                                    "availability_status": VehicleAvailabilityStatus.AVAILABLE
+                                },
+                            },
+                            callback: function(r) {
+                                console.log(r)
+                                let vehicleList = response.message;
+                                if (!values.date)
+                                    frappe.throw({
+                                        title: __("Missing Next Reminding Date"),
+                                        message: __(
+                                            "Please enter the next reminding date"
+                                        ),
+                                    });
+                                if (vehicleList && vehicleList.length == 0 && !values.vehicle)
+                                    frappe.throw({
+                                        title: __("Missing New Assigned Vehicle"),
+                                        message: __(
+                                            "Please enter the new assigned vehicle"
+                                        ),
+                                    });
+                                frm.next_reminding_date = values.date
+                                createNewMV(frm, values.date);
+                                if (values.vehicle)
+                                    rentApplicationPreparedToClose = prepareRentApplicationToClose(frm, values);
+                                else
+                                    rentApplicationPreparedToClose = prepareRentApplicationToClose(frm, {});
+                                if (!frm.doc.submitted_at)
+                                    frm.doc.submitted_at = frm.doc.modified;
+                                console.log({
+                                    rentApplicationPreparedToClose,
+                                })
+                                if (rentApplicationPreparedToClose)
+                                    frm.save("Submit");
+                            }
                         })
-                        if (rentApplicationPreparedToClose)
-                            frm.save("Submit");
                     },
                     __("Next Reminding Date"),
                     __("Create")
