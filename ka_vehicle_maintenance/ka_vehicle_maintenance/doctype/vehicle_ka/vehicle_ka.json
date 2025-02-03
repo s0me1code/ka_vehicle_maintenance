@@ -14,33 +14,36 @@
   "current_km",
   "last_visit_date",
   "company",
+  "insurance_section",
+  "end_date",
+  "ownership_section",
+  "vehicle_owner",
+  "maintenance_details_tab",
   "status_details_section",
-  "ownership_status",
   "ownership_type",
   "lto_doc",
   "availability_status",
   "column_break_ijmj",
-  "maintenace_visit_status",
   "called",
   "visited",
   "state",
   "section_break_ubes",
   "closest_reminding_date",
   "visits",
+  "rent_details_tab",
   "current_renter_detials_section",
   "rider",
   "rider_name",
   "column_break_qsri",
   "phone_number",
   "whatsapp_number",
+  "rent_history_section",
+  "rent_history",
+  "tab_4_tab",
   "section_break_yasj",
   "quotations",
   "total",
-  "last_quotation_status",
-  "insurance_section",
-  "end_date",
-  "ownership_section",
-  "vehicle_owner"
+  "last_quotation_status"
  ],
  "fields": [
   {
@@ -97,6 +100,7 @@
   {
    "fieldname": "insurance_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Insurance"
   },
   {
@@ -107,6 +111,7 @@
   {
    "fieldname": "ownership_section",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Ownership"
   },
   {
@@ -123,7 +128,8 @@
   },
   {
    "fieldname": "section_break_ubes",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Maintenance Visits Details"
   },
   {
    "fieldname": "status_details_section",
@@ -147,11 +153,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "ownership_status",
-   "fieldtype": "Heading",
-   "label": "Ownership Status"
-  },
-  {
    "default": "Rental",
    "fieldname": "ownership_type",
    "fieldtype": "Select",
@@ -161,11 +162,6 @@
   {
    "fieldname": "column_break_ijmj",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "maintenace_visit_status",
-   "fieldtype": "Heading",
-   "label": "Maintenace Visit Status"
   },
   {
    "fieldname": "lto_doc",
@@ -212,13 +208,14 @@
   {
    "fieldname": "current_renter_detials_section",
    "fieldtype": "Section Break",
-   "label": "Current Rider Detials"
+   "label": "Current Renter Detials"
   },
   {
    "fieldname": "rider",
    "fieldtype": "Link",
    "label": "Rider",
-   "options": "Employee"
+   "options": "Employee",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_qsri",
@@ -252,18 +249,47 @@
    "fieldname": "availability_status",
    "fieldtype": "Select",
    "label": "Availability Status",
-   "options": "On Road\nIn Garage\nAvailable"
+   "options": "On Road\nIn Garage\nAvailable",
+   "read_only": 1
   },
   {
    "fieldname": "pay_per_month",
    "fieldtype": "Currency",
    "label": "Pay Per Month",
    "non_negative": 1
+  },
+  {
+   "fieldname": "rent_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Rent"
+  },
+  {
+   "fieldname": "maintenance_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Maintenance Visits"
+  },
+  {
+   "fieldname": "tab_4_tab",
+   "fieldtype": "Tab Break",
+   "label": "Quotations"
+  },
+  {
+   "fieldname": "rent_history_section",
+   "fieldtype": "Section Break",
+   "label": "Rent History",
+   "options": "Vehicle"
+  },
+  {
+   "fieldname": "rent_history",
+   "fieldtype": "Table",
+   "label": "Rent History",
+   "options": "Vehicle Rent Application History KA",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-02 13:52:12.335734",
+ "modified": "2025-02-02 16:43:08.026232",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Vehicle KA",

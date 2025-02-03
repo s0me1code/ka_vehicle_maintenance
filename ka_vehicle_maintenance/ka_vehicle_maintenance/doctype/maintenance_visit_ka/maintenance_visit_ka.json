@@ -21,12 +21,12 @@
   "maintenance_date",
   "new_km",
   "distance",
+  "ownership_type",
+  "lto_doc",
   "column_break_kqkk",
   "availability_status",
   "called",
-  "need_visit",
   "visited",
-  "visit_late",
   "state",
   "attachment",
   "section_break_ffso",
@@ -120,17 +120,17 @@
   },
   {
    "default": "Upcoming",
-   "depends_on": "eval:doc.availability_status==\"On Road\"",
+   "depends_on": "eval:doc.availability_status==\"On Road\"&&doc.ownership_type==\"Rental\"",
    "fieldname": "state",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "State",
-   "options": "\nUnused\nUpcoming\nUnchecked\nNotified\nEarly Notified\nServiced\nPending Approval\nOverdue",
+   "options": "\nUnused\nUpcoming\nUnchecked\nNotified\nServiced",
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.availability_status==\"On Road\"&&(doc.state==\"Serviced\"||doc.state==\"Overdue\")",
+   "depends_on": "eval:doc.onwership_type==\"Rental\"&&doc.availability_status==\"On Road\"&&(doc.state==\"Serviced\"||doc.state==\"Overdue\")",
    "fieldname": "attachment",
    "fieldtype": "Attach",
    "label": "Attachment"
@@ -138,7 +138,6 @@
   {
    "fieldname": "next_visit_section",
    "fieldtype": "Section Break",
-   "hidden": 0,
    "label": "Next Visit",
    "show_on_timeline": 1
   },
@@ -150,7 +149,7 @@
   {
    "fieldname": "section_break_hsas",
    "fieldtype": "Section Break",
-   "hidden": 0
+   "hidden": 1
   },
   {
    "fieldname": "visits",
@@ -161,7 +160,6 @@
   {
    "fieldname": "section_break_ypjy",
    "fieldtype": "Section Break",
-   "hidden": 0,
    "read_only": 1
   },
   {
@@ -176,7 +174,7 @@
   },
   {
    "default": "No",
-   "depends_on": "eval:doc.availability_status==\"On Road\"",
+   "depends_on": "eval:doc.availability_status==\"On Road\"&&doc.ownership_type==\"Rental\"",
    "fieldname": "called",
    "fieldtype": "Select",
    "label": "Did You Call the Rider?",
@@ -184,26 +182,10 @@
   },
   {
    "default": "No",
-   "depends_on": "eval:doc.availability_status==\"On Road\"",
+   "depends_on": "eval:doc.availability_status==\"On Road\"&&doc.ownership_type==\"Rental\"",
    "fieldname": "visited",
    "fieldtype": "Select",
    "label": "Did the Rider Visit the Garage?",
-   "options": "No\nYes"
-  },
-  {
-   "default": "No",
-   "fieldname": "need_visit",
-   "fieldtype": "Select",
-   "hidden": 0,
-   "label": "Does the Vehicle Needed Maintenance?",
-   "options": "No\nYes"
-  },
-  {
-   "default": "No",
-   "fieldname": "visit_late",
-   "fieldtype": "Select",
-   "hidden": 0,
-   "label": "Did the Rider Visit the Garage Late?",
    "options": "No\nYes"
   },
   {
@@ -229,7 +211,6 @@
   {
    "fieldname": "section_break_pqev",
    "fieldtype": "Section Break",
-   "hidden": 0,
    "show_on_timeline": 1
   },
   {
@@ -245,13 +226,13 @@
    "precision": "3"
   },
   {
+   "depends_on": "eval:doc.ownership_type==\"Rental\"&&doc.ownership_type==\"Rental\"",
    "fieldname": "column_break_kqkk",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "section_break_ffso",
    "fieldtype": "Section Break",
-   "hidden": 0,
    "label": "Details",
    "show_on_timeline": 1
   },
@@ -297,24 +278,40 @@
    "fetch_if_empty": 1,
    "fieldname": "rider",
    "fieldtype": "Link",
-   "hidden": 0,
    "label": "Rider",
-   "options": "Employee"
+   "options": "Employee",
+   "read_only": 1
   },
   {
    "default": "On Road",
+   "depends_on": "eval:doc.ownership_type==\"Rental\"",
    "fetch_from": "vehicle.availability_status",
    "fetch_if_empty": 1,
    "fieldname": "availability_status",
    "fieldtype": "Select",
    "label": "Availability Status",
+   "mandatory_depends_on": "eval:doc.ownership_type==\"Rental\"",
    "options": "On Road\nIn Garage\nAvailable"
+  },
+  {
+   "fieldname": "ownership_type",
+   "fieldtype": "Select",
+   "label": "Ownership Type",
+   "options": "LTO\nRental",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.ownership_type==\"LTO\"",
+   "fieldname": "lto_doc",
+   "fieldtype": "Attach",
+   "label": "LTO Document",
+   "mandatory_depends_on": "eval:doc.ownership_type==\"LTO\""
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-02 10:30:10.009510",
+ "modified": "2025-02-02 16:51:54.780658",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",

@@ -268,7 +268,9 @@ def create_new_maintenance_visit(doc, reminding_date=None):
     mv.vehicle = doc.vehicle
     mv.company = doc.company
     mv.vehicle_year = doc.vehicle_year
-    mv.state = "Upcoming"
+    mv.state = VehicleStatus.UPCOMING.value
+    mv.availability_status = doc.availability_status
+    mv.ownership_type = VehicleOwnershipType.RENTED.value
     mv.last_km = doc.new_km
     mv.new_km = doc.new_km
     mv.reminding_date = reminding_date
@@ -289,15 +291,22 @@ def create_new_maintenance_visit(doc, reminding_date=None):
 
 
 @frappe.whitelist()
-def prepare_rent_application_to_close(doc):
+def prepare_rent_application_to_close(doc, values):
+    new_vehicle = None
     if isinstance(doc, str):
         doc = json.loads(doc)
+        values = json.loads(values)
 
         try:
             rider = doc["rider"]
         except KeyError:
             frappe.msgprint("There is no rider assigned to this vehicle")
             return True
+
+        try:
+            new_vehicle = doc["vehicle"]
+        except KeyError:
+            new_vehicle = None
 
         doc = AttrDict(doc)
     elif isinstance(doc, dict):
@@ -330,12 +339,11 @@ def prepare_rent_application_to_close(doc):
                 )
             for ra in rent_applications:
                 rent_app = frappe.get_doc("Rent Application KA", ra.name)
-                if (vehicle):
-                    rent_app.create_new_rent_application_with_different_vehicle(
-                        vehicle, None)
                 rent_app.prepare_to_close()
+                if new_vehicle:
+                    rent_app.create_new_rent_application_with_different_vehicle(
+                        new_vehicle, None)
             return True
-
         except frappe.DoesNotExistError:
             frappe.msgprint("Rider not found")
     except frappe.DoesNotExistError:

@@ -3,18 +3,14 @@
 const VehicleStatus = {
     UNUSED: "Unused",
     SERVICED: "Serviced",
-    OVERDUE: "Overdue",
-
     NOTIFIED: "Notified",
-    EARLY_NOTIFIED: "Early Notified",
-    IN_GARAGE: "In Garage",
-
-    PENDING_APPROVAL: "Pending Approval",
-
     UPCOMING: "Upcoming",
     UNCHECKED: "Unchecked",
 }
-
+const VehicleOwnershipType = {
+    LTO: "LTO",
+    RENTAL: "Rental"
+}
 const VehicleAvailabilityStatus = {
     IN_GARAGE: "In Garage",
     On_Road: "On Road",
@@ -184,6 +180,10 @@ frappe.ui.form.on("Maintenance Visit KA", {
                 message: __("Please enter the new KM"),
             });
         }
+        if (frm.ownership_type == VehicleOwnershipType.LTO) {
+            prepareRentApplicationToClose(frm, {})
+            return
+        }
         switch (frm.doc.availability_status) {
             case VehicleAvailabilityStatus.IN_GARAGE:
                 frappe.validated = false;
@@ -250,7 +250,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
                             });
                         frm.next_reminding_date = values.date
                         createNewMV(frm, values.date);
-                        prentApplicationPreparedToClose = repareRentApplicationToClose(frm);
+                        prentApplicationPreparedToClose = prepareRentApplicationToClose(frm, {});
                         if (!frm.doc.submitted_at)
                             frm.doc.submitted_at = frm.doc.modified;
                         if (rentApplicationPreparedToClose)
@@ -340,26 +340,15 @@ const createNewMV = (frm, reminding_date) => {
         // },
     });
 };
-const prepareRentApplicationToClose = (frm) => {
+const prepareRentApplicationToClose = (frm, values) => {
     frappe.call({
         method: "ka_vehicle_maintenance.events.prepare_rent_application_to_close",
-        args: {
-            doc: frm.doc,
-        },
-        callback: ({ message }) => {
-            console.log("rentApplicationPreparedToClose", message);
-        },
-    });
-};
-const createNewRentApplication = (frm, values) => {
-    frappe.call({
-        method: "ka_vehicle_maintenance.events.create_new_rent_application",
         args: {
             doc: frm.doc,
             values: values,
         },
         callback: ({ message }) => {
-            console.log("rentApplicationCreated", message);
+            console.log("rentApplicationPreparedToClose", message);
         },
     });
 };

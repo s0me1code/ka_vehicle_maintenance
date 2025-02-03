@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.utils import add_days
-from ka_vehicle_maintenance.enums import VehicleStatus
+from ka_vehicle_maintenance.enums import AvailabilityStatus, VehicleOwnershipType, VehicleStatus
 
 # NOTE:
 """
@@ -19,16 +19,32 @@ class MaintenanceVisitKA(Document):
         if not self.reminding_date and self.maintenance_date:
             self.reminding_date = add_days(self.maintenance_date, -3)
 
+    def before_save(self):
+        vehicle = frappe.get_doc("Vehicle KA", self.vehicle)
+        if vehicle.rider:
+            self.rider = vehicle.rider
+            self.rider_name = vehicle.rider_name
+            self.rider_whatsapp_number = vehicle.whatsapp_number
+            self.phone_number = vehicle.phone_number
+
     def on_update(self):
         self.update_vehicle_visit()
         if self.state != VehicleStatus.UPCOMING.value:
             self.update_vehicle_state()
 
     def on_submit(self):
-        frappe.db.set_value("Vehicle KA", self.vehicle,
-                            "current_km", self.new_km,)
-        frappe.db.set_value("Vehicle KA", self.vehicle,
-                            "last_visit_date", self.maintenance_date,)
+        vehicle = frappe.get_doc("Vehicle KA", self.vehicle)
+        vehicle.current_km = self.new_km
+        vehicle.last_visit_date = self.maintenance_date
+        if self.ownership_type == VehicleOwnershipType.LTO.value:
+            vehicle.ownership_type = self.ownership_type
+            vehicle.lto_doc = self.lto_doc
+        if self.availablity_status != AvailabilityStatus.ON_ROAD.value:
+            vehicle.availablity_status = self.availablity_status
+            vehicle.rider = None
+            vehicle.rider_name = None
+            vehicle.whatsapp_number = None
+            vehicle.phone_number = None
 
     def on_cancel(self):
         self.remove_from_vehicle()

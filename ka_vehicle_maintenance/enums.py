@@ -25,3 +25,4 @@ class VehicleStatus(Enum):
 class AvailabilityStatus(Enum):
     ON_ROAD = "On Road"
     IN_GARAGE = "In Garage"
+    AVAILABLE = "Available"
