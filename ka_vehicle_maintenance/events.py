@@ -304,7 +304,7 @@ def prepare_rent_application_to_close(doc, values):
             return True
 
         try:
-            new_vehicle = doc["vehicle"]
+            new_vehicle = values["vehicle"]
         except KeyError:
             new_vehicle = None
 
