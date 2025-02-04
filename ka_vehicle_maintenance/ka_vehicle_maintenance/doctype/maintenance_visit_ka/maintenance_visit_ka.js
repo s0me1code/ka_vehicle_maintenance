@@ -161,7 +161,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
             });
         }
         if (frm.doc.ownership_type == VehicleOwnershipType.LTO) {
-            prepareRentApplicationToClose(frm, {})
+            handleRentApplication(frm, {})
             return
         }
         switch (frm.doc.availability_status) {
@@ -212,10 +212,11 @@ frappe.ui.form.on("Maintenance Visit KA", {
                                     });
                                 frm.next_reminding_date = values.date
                                 createNewMV(frm, values.date);
+                                let rentApplicationPreparedToClose
                                 if (values.vehicle)
-                                    rentApplicationPreparedToClose = prepareRentApplicationToClose(frm, values);
+                                    rentApplicationPreparedToClose = handleRentApplication(frm, values)
                                 else
-                                    rentApplicationPreparedToClose = prepareRentApplicationToClose(frm, {});
+                                    rentApplicationPreparedToClose = handleRentApplication(frm, {})
                                 if (!frm.doc.submitted_at)
                                     frm.doc.submitted_at = frm.doc.modified;
                                 console.log({
@@ -248,7 +249,7 @@ frappe.ui.form.on("Maintenance Visit KA", {
                             });
                         frm.next_reminding_date = values.date
                         createNewMV(frm, values.date);
-                        prentApplicationPreparedToClose = prepareRentApplicationToClose(frm, {});
+                        const rentApplicationPreparedToClose = handleRentApplication(frm, {})
                         if (!frm.doc.submitted_at)
                             frm.doc.submitted_at = frm.doc.modified;
                         if (rentApplicationPreparedToClose)
@@ -259,12 +260,10 @@ frappe.ui.form.on("Maintenance Visit KA", {
                 );
                 break;
         }
-        if (frm.doc.avalibility_status == VehicleAvailabilityStatus.On_Road)
+        if (frm.doc.availability_status == VehicleAvailabilityStatus.On_Road)
             switch (frm.doc.state) {
-                case VehicleStatus.PENDING_APPROVAL:
                 case VehicleStatus.UNCHECKED:
                 case VehicleStatus.UPCOMING:
-                case VehicleStatus.UNUSED:
                     // Prevent the default submit action
                     frappe.throw({
                         title: __("Unvalid State"),
@@ -273,7 +272,6 @@ frappe.ui.form.on("Maintenance Visit KA", {
                     break;
 
                 case VehicleStatus.SERVICED:
-                case VehicleStatus.OVERDUE:
                     if (!frm.doc.attachment) {
                         // Prevent the default submit action
                         frappe.throw({
@@ -290,7 +288,6 @@ frappe.ui.form.on("Maintenance Visit KA", {
                     break;
 
                 case VehicleStatus.NOTIFIED:
-                case VehicleStatus.EARLY_NOTIFIED:
                     frappe.validated = false;
                     frappe.prompt(
                         {
@@ -336,16 +333,33 @@ const createNewMV = (frm, reminding_date) => {
     });
 };
 const prepareRentApplicationToClose = (frm, values) => {
-    frappe.call({
-        method: "ka_vehicle_maintenance.events.prepare_rent_application_to_close",
-        args: {
-            doc: frm.doc,
-            values: values,
-        },
-        callback: ({ message }) => {
-            console.log("rentApplicationPreparedToClose", message);
-        },
+    return new Promise((resolve, reject) => {
+        frappe.call({
+            method: "ka_vehicle_maintenance.events.prepare_rent_application_to_close",
+            args: {
+                doc: frm.doc,
+                values: values,
+            },
+            callback: ({ message }) => {
+                console.log("rentApplicationPreparedToClose", message);
+                resolve(message); // Resolve the promise with the result
+            },
+            error: (err) => {
+                reject(err); // Reject in case of error
+            }
+        });
     });
+};
+
+// Usage with `await`
+const handleRentApplication = async (frm, values) => {
+    try {
+        const result = await prepareRentApplicationToClose(frm, values);
+        return result
+    } catch (error) {
+        console.error("Error preparing rent application to close:", error);
+        return false
+    }
 };
 
 /**

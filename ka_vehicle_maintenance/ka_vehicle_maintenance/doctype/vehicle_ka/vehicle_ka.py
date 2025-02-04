@@ -14,3 +14,7 @@ class VehicleKA(Document):
             self.whatsapp_number = emp.custom_whatsapp_number
             self.phone_number = emp.cell_number
             self.availability_status = AvailabilityStatus.ON_ROAD.value
+        else:  # if no rider is assigned
+            self.rider_name = None
+            self.whatsapp_number = None
+            self.phone_number = None
