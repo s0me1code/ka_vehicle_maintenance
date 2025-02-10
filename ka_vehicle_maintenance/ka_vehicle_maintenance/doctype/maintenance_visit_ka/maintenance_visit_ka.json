@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "visit_details_tab",
   "section_break_ybwq",
   "amended_from",
   "section_break_hsas",
@@ -29,6 +30,7 @@
   "visited",
   "state",
   "attachment",
+  "vehicle_details_tab",
   "section_break_ffso",
   "vehicle",
   "company",
@@ -38,13 +40,14 @@
   "column_break_wcbw",
   "next_visit_section",
   "next_reminding_date",
+  "section_break_ypjy",
+  "checked_at",
+  "submitted_at",
+  "quotation_details_tab",
   "section_break_pqev",
   "quotation",
   "maintenance_visit_items",
-  "total",
-  "section_break_ypjy",
-  "checked_at",
-  "submitted_at"
+  "total"
  ],
  "fields": [
   {
@@ -306,12 +309,29 @@
    "label": "Availability Status",
    "mandatory_depends_on": "eval:doc.ownership_type==\"Rental\"",
    "options": "On Road\nIn Garage\nAvailable"
+  },
+  {
+   "fieldname": "visit_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Visit Details"
+  },
+  {
+   "fieldname": "vehicle_details_tab",
+   "fieldtype": "Tab Break",
+   "hidden": 1,
+   "label": "Vehicle Details"
+  },
+  {
+   "fieldname": "quotation_details_tab",
+   "fieldtype": "Tab Break",
+   "hidden": 1,
+   "label": "Quotation Details"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-02-03 16:11:05.058174",
+ "modified": "2025-02-10 12:31:23.206448",
  "modified_by": "Administrator",
  "module": "KA Vehicle Maintenance",
  "name": "Maintenance Visit KA",
